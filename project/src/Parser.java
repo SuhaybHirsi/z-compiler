@@ -130,7 +130,7 @@ public class Parser extends java_cup.runtime.lr_parser {
 
 
   private boolean debug = false;
-  public boolean syntaxErrors;
+  public boolean syntaxErrors = false;
 
   public boolean  debug()         {return debug;}
   public void     debug(boolean b){debug = b;}
@@ -175,6 +175,7 @@ public class Parser extends java_cup.runtime.lr_parser {
     "Syntax error at line " + (current_token.left+1) + ", column "
     + current_token.right, null
     );
+	syntaxErrors = true;
   }
 
 

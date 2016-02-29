@@ -6,7 +6,7 @@ scan with {: return lexer.next_token(); :};
 parser code {:
 
   private boolean debug = false;
-  public boolean syntaxErrors;
+  public boolean syntaxErrors = false;
 
   public boolean  debug()         {return debug;}
   public void     debug(boolean b){debug = b;}
@@ -51,6 +51,7 @@ parser code {:
     "Syntax error at line " + (current_token.left+1) + ", column "
     + current_token.right, null
     );
+	syntaxErrors = true;
   }
 
 :};

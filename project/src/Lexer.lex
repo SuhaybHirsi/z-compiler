@@ -20,7 +20,7 @@ import java_cup.runtime.*;
       case sym.LET:
         System.out.print("LET"); break;
       case sym.EQUAL:
-        System.out.print(":="); break;
+        System.out.print("="); break;
       case sym.SEMICOL:
         System.out.print(";"); break;
       case sym.PLUS:
@@ -60,25 +60,53 @@ Letter = [a-zA-Z]
 Digit = [0-9]
 IdChar = {Letter} | {Digit} | "_"
 Identifier = {Letter}{IdChar}*
-Integer = (0|[1-9]{Digit}*)
+Integer = (0|[1-9]{Digit}*) | "-"([1-9]{Digit}*)
+Float = {Integer}"."{Digit}* | "."{Digit}*
+Rational = {Integer}"/"{Integer} | {Integer}"_"{Integer}"/"{Integer}
 
 %%
 <YYINITIAL> {
-
-  "let"         { return symbol(sym.LET);        }
-  {Integer}     { return symbol(sym.INTEGER,
+	"main"			{ return symbol(sym.MAIN);}
+	"bool"			{ return symbol(sym.BOOL);}
+	"char"			{ return symbol(sym.CHAR);}
+	"dict"			{ return symbol(symbol.DICT);}
+	"int"			{ return symbol(symbol.INT);}
+	"rat"			{ return symbol(symbol.RAT);}
+	"float"			{ return symbol(symbol.FLOAT);}
+	"top"			{ return symbol(symbol.TOP);}
+	"seq"			{ return symbol(symbol.SEQ);}
+	"in"         	{ return symbol(sym.IN);        }
+	"T"         	{ return symbol(sym.TRUE);        }
+	"F"         	{ return symbol(sym.FALSE);        }
+	"tdef"         	{ return symbol(sym.TDEF);        }
+	{Integer}     	{ return symbol(sym.INTEGER,
                                 Integer.parseInt(yytext())); }
-  {Identifier}  { return symbol(sym.IDENTIFIER, yytext());   }
+	{Identifier}  	{ return symbol(sym.IDENTIFIER, yytext());   }
 
-  {Whitespace}  { /* do nothing */               }
-  ":="          { return symbol(sym.EQUAL);      }
-  ";"           { return symbol(sym.SEMICOL);    }
-  "+"           { return symbol(sym.PLUS);       }
-  "-"           { return symbol(sym.MINUS);      }
-  "*"           { return symbol(sym.MULT);       }
-  "/"           { return symbol(sym.DIV);        }
-  "("           { return symbol(sym.LPAREN);     }
-  ")"           { return symbol(sym.RPAREN);     }
+	{Whitespace}  	{ /* do nothing */               }
+	"<="          	{ return symbol(sym.LESSOREQUAL);     }
+	"=="          	{ return symbol(sym.ISEQUAL);     }
+	"!="          	{ return symbol(sym.NOTEQUAL);     }
+	"/#"          	{ return symbol(sym.STARTCOMMENT);     }
+	"#/"          	{ return symbol(sym.ENDCOMMENT);     }
+	"{"          	{ return symbol(sym.LCURLY);     }
+	"}"          	{ return symbol(sym.RCURLY);     }
+	"["          	{ return symbol(sym.LSQUARE);     }
+	"]"          	{ return symbol(sym.RSQUARE);     }
+	"="          	{ return symbol(sym.EQUAL);      }
+	";"           	{ return symbol(sym.SEMICOL);    }
+	"+"           	{ return symbol(sym.PLUS);       }
+	"-"           	{ return symbol(sym.MINUS);      }
+	"*"           	{ return symbol(sym.MULT);       }
+	"/"           	{ return symbol(sym.DIV);        }
+	"("           	{ return symbol(sym.LPAREN);     }
+	")"          	{ return symbol(sym.RPAREN);     }
+	"<"          	{ return symbol(sym.LESSTHAN);     }
+	"#"          	{ return symbol(sym.LINECOMMENT);     }
+	"!"          	{ return symbol(sym.NOT);     }
+	"&&"          	{ return symbol(sym.AND);     }
+	"||"          	{ return symbol(sym.OR);     }
+	"^"          	{ return symbol(sym.POWER);     }
 
 }
 
