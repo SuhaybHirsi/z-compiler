@@ -16,11 +16,11 @@ public class sym {
   public static final int LINECOMMENT = 46;
   public static final int INTEGER = 54;
   public static final int NOTEQUAL = 32;
-  public static final int LPAREN = 58;
-  public static final int BADCHAR = 60;
+  public static final int LPAREN = 59;
+  public static final int BADCHAR = 61;
   public static final int INT = 6;
   public static final int MINUS = 42;
-  public static final int RPAREN = 59;
+  public static final int RPAREN = 60;
   public static final int CHARACTER = 57;
   public static final int AND = 48;
   public static final int NOT = 47;
@@ -53,6 +53,7 @@ public class sym {
   public static final int COLON = 53;
   public static final int DICT = 5;
   public static final int ELSE = 20;
+  public static final int DTYPE = 58;
   public static final int LSQUARE = 37;
   public static final int READ = 23;
   public static final int DCOLON = 52;
@@ -126,6 +127,7 @@ public class sym {
   "IDENTIFIER",
   "LET",
   "CHARACTER",
+  "DTYPE",
   "LPAREN",
   "RPAREN",
   "BADCHAR"

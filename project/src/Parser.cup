@@ -57,67 +57,29 @@ parser code {:
 :};
 
 // Do something with ILLEGAL_CHARARCTER or drop it.
-terminal MAIN, BOOL, CHAR, DICT, INT, RAT, FLOAT, TOP, SEQ, IN, TRUE, FALSE, TDEF, FDEF, VOID, ALIAS, IF, ELIF, ELSE, FORALL, WHILE, READ, PRINT, RETURN, OD, DO, FI, LEN, LESSOREQUAL, ISEQUAL, NOTEQUAL, STARTCOMMENT, ENDCOMMENT, LCURLY, RCURLY, LSQUARE, RSQUARE, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV, LESSTHAN, LINECOMMENT, NOT, AND, OR, POWER, RARROW, DCOLON, COLON, INTEGER, IDENTIFIER, LET, CHARACTER;
+terminal MAIN, BOOL, CHAR, DICT, INT, RAT, FLOAT, TOP, SEQ, IN, TRUE, FALSE, TDEF, FDEF, VOID, ALIAS, IF, ELIF, ELSE, FORALL, WHILE, READ, PRINT, RETURN, OD, DO, FI, LEN, LESSOREQUAL, ISEQUAL, NOTEQUAL, STARTCOMMENT, ENDCOMMENT, LCURLY, RCURLY, LSQUARE, RSQUARE, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV, LESSTHAN, LINECOMMENT, NOT, AND, OR, POWER, RARROW, DCOLON, COLON, INTEGER, IDENTIFIER, LET, CHARACTER, DTYPE;
 terminal LPAREN, RPAREN;
 terminal BADCHAR;
 
-nonterminal statements, statement, top_level;
-nonterminal let_bind, full_exp, simple_exp, operator;
+nonterminal statement, expr, func;
 
 precedence left PLUS, MINUS;
 precedence left DIV, MULT;
 
-top_level ::= statements:ss {:
-                if(debug()) System.out.println((Node)ss);
-              :}
-            ;
+/* The grammar */
+func ::= MAIN LCURLY RETURN SEMICOL RCURLY SEMICOL
+		|
+		MAIN LCURLY statement RETURN SEMICOL RCURLY SEMICOL
+		|
+		MAIN LCURLY statement RCURLY SEMICOL;
+statement ::= expr SEMICOL;
 
-statements ::= statements:ss statement:s {:
-                  Node n = (Node)ss;
-                  n.addChild((Node)s);
-                  RESULT = n;
-               :}
-             | /* empty */ {:
-                  RESULT = new Node("Statements");
-               :}
-             ;
-
-statement ::= let_bind:s {:
-                RESULT = (Node)s;
-              :}
-            | full_exp:s {:
-                RESULT = (Node)s;
-              :}
-            ;
-
-full_exp ::= simple_exp:e SEMICOL {: RESULT = (Node)e; :};
-
-simple_exp ::= INTEGER:i    {: RESULT = new Node(i); :}
-             | IDENTIFIER:i {: RESULT = new Node(i); :}
-             | simple_exp:e1 operator:o simple_exp:e2 {:
-                  Node n = (Node)o;
-                  n.addChild((Node)e1);
-                  n.addChild((Node)e2);
-                  RESULT = n;
-               :}
-             | LPAREN simple_exp:e RPAREN {:
-                 Node n = new Node("parens");
-                 n.addChild(new Node("("));
-                 n.addChild((Node)e);
-                 n.addChild(new Node(")"));
-                 RESULT = (Node)e;
-               :}
-             ;
-
-operator ::= PLUS  {: RESULT = new Node("+"); :}
-           | MINUS {: RESULT = new Node("-"); :}
-           | MULT  {: RESULT = new Node("*"); :}
-           | DIV   {: RESULT = new Node("/"); :}
-           ;
-
-let_bind ::= LET IDENTIFIER:i EQUAL full_exp:e {:
-               Node n = new Node("LET");
-               n.addChild(new Node(i));
-               n.addChild((Node)e);
-               RESULT = n;
-             :};
+expr ::= DTYPE expr EQUAL FLOAT
+		|
+		IDENTIFIER
+		|
+		PRINT expr
+		|
+		FLOAT
+		|
+		INTEGER;

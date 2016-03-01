@@ -57,8 +57,10 @@ import java_cup.runtime.*;
 Whitespace = \r|\n|\r\n|" "|"\t"
 
 Letter = [a-zA-Z]
+LCase = [a-z]
 Digit = [0-9]
-Character = "'"{Letter}"'"
+DType = ({LCase}{LCase}*)
+Character = {Letter}
 IdChar = {Letter} | {Digit} | "_"
 Identifier = {Letter}{IdChar}*
 PosInteger = ([1-9]{Digit}*)
@@ -100,8 +102,9 @@ Rational = {Integer}"/"{PosInteger} | {Integer}"_"{PosInteger}"/"{PosInteger}
 	{Integer}     	{ return symbol(sym.INTEGER,
                                 Integer.parseInt(yytext())); }
 	{Float} 	 	{ return symbol(sym.FLOAT, Float.parseFloat(yytext()));   }
-	{Character}		{ return symbol(sym.CHARACTER);}
+	{Character}		{ return symbol(sym.CHARACTER, yytext());}
 	{Identifier}  	{ return symbol(sym.IDENTIFIER, yytext());   }
+	{DType}	 	 	{ return symbol(sym.DType, yytext());   }
 
 	{Whitespace}  	{ /* do nothing */               }
 	"<="          	{ return symbol(sym.LESSOREQUAL);     }
