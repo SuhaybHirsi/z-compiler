@@ -60,9 +60,10 @@ Letter = [a-zA-Z]
 Digit = [0-9]
 IdChar = {Letter} | {Digit} | "_"
 Identifier = {Letter}{IdChar}*
-Integer = (0|[1-9]{Digit}*) | "-"([1-9]{Digit}*)
+PosInteger = ([1-9]{Digit}*)
+Integer = -0 | 0 | PosInteger | "-"([1-9]{Digit}*)
 Float = {Integer}"."{Digit}* | "."{Digit}*
-Rational = {Integer}"/"{Integer} | {Integer}"_"{Integer}"/"{Integer}
+Rational = {Integer}"/"{PosInteger} | {Integer}"_"{PosInteger}"/"{PosInteger}
 
 %%
 <YYINITIAL> {
@@ -79,6 +80,21 @@ Rational = {Integer}"/"{Integer} | {Integer}"_"{Integer}"/"{Integer}
 	"T"         	{ return symbol(sym.TRUE);        }
 	"F"         	{ return symbol(sym.FALSE);        }
 	"tdef"         	{ return symbol(sym.TDEF);        }
+	"fdef"         	{ return symbol(sym.FDEF);        }
+	"void"         	{ return symbol(sym.VOID);        }
+	"alias"         { return symbol(sym.ALIAS);        }
+	"if"         	{ return symbol(sym.IF);        }
+	"elif"         	{ return symbol(sym.ELIF);        }
+	"else"         	{ return symbol(sym.ELSE);        }
+	"forall"        { return symbol(sym.FORALL);        }
+	"while"         { return symbol(sym.WHILE);        }
+	"read"         	{ return symbol(sym.READ);        }
+	"print"         { return symbol(sym.PRINT);        }
+	"return"        { return symbol(sym.RETURN);        }
+	"od"        	{ return symbol(sym.OD);        }
+	"do"        	{ return symbol(sym.DO);        }
+	"fi"        	{ return symbol(sym.FI);        }
+	
 	{Integer}     	{ return symbol(sym.INTEGER,
                                 Integer.parseInt(yytext())); }
 	{Identifier}  	{ return symbol(sym.IDENTIFIER, yytext());   }
@@ -107,6 +123,7 @@ Rational = {Integer}"/"{Integer} | {Integer}"_"{Integer}"/"{Integer}
 	"&&"          	{ return symbol(sym.AND);     }
 	"||"          	{ return symbol(sym.OR);     }
 	"^"          	{ return symbol(sym.POWER);     }
+	">"				{ return symbol(sym.RARROW);	}
 
 }
 
