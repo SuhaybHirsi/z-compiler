@@ -58,6 +58,7 @@ Whitespace = \r|\n|\r\n|" "|"\t"
 
 Letter = [a-zA-Z]
 Digit = [0-9]
+Character = "'"{Letter}"'"
 IdChar = {Letter} | {Digit} | "_"
 Identifier = {Letter}{IdChar}*
 PosInteger = ([1-9]{Digit}*)
@@ -70,12 +71,12 @@ Rational = {Integer}"/"{PosInteger} | {Integer}"_"{PosInteger}"/"{PosInteger}
 	"main"			{ return symbol(sym.MAIN);}
 	"bool"			{ return symbol(sym.BOOL);}
 	"char"			{ return symbol(sym.CHAR);}
-	"dict"			{ return symbol(symbol.DICT);}
-	"int"			{ return symbol(symbol.INT);}
-	"rat"			{ return symbol(symbol.RAT);}
-	"float"			{ return symbol(symbol.FLOAT);}
-	"top"			{ return symbol(symbol.TOP);}
-	"seq"			{ return symbol(symbol.SEQ);}
+	"dict"			{ return symbol(sym.DICT);}
+	"int"			{ return symbol(sym.INT);}
+	"rat"			{ return symbol(sym.RAT);}
+	"float"			{ return symbol(sym.FLOAT);}
+	"top"			{ return symbol(sym.TOP);}
+	"seq"			{ return symbol(sym.SEQ);}
 	"in"         	{ return symbol(sym.IN);        }
 	"T"         	{ return symbol(sym.TRUE);        }
 	"F"         	{ return symbol(sym.FALSE);        }
@@ -94,9 +95,12 @@ Rational = {Integer}"/"{PosInteger} | {Integer}"_"{PosInteger}"/"{PosInteger}
 	"od"        	{ return symbol(sym.OD);        }
 	"do"        	{ return symbol(sym.DO);        }
 	"fi"        	{ return symbol(sym.FI);        }
+	"len"        	{ return symbol(sym.LEN);        }
 	
 	{Integer}     	{ return symbol(sym.INTEGER,
                                 Integer.parseInt(yytext())); }
+	{Float} 	 	{ return symbol(sym.FLOAT, Float.parseFloat(yytext()));   }
+	{Character}		{ return symbol(sym.CHARACTER);}
 	{Identifier}  	{ return symbol(sym.IDENTIFIER, yytext());   }
 
 	{Whitespace}  	{ /* do nothing */               }
@@ -124,6 +128,8 @@ Rational = {Integer}"/"{PosInteger} | {Integer}"_"{PosInteger}"/"{PosInteger}
 	"||"          	{ return symbol(sym.OR);     }
 	"^"          	{ return symbol(sym.POWER);     }
 	">"				{ return symbol(sym.RARROW);	}
+	"::"			{ return symbol(sym.DCOLON);		}
+	":"				{ return symbol(sym.COLON);		}
 
 }
 
