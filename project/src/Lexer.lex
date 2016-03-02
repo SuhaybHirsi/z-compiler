@@ -57,16 +57,14 @@ import java_cup.runtime.*;
 Whitespace = \r|\n|\r\n|" "|"\t"
 
 Letter = [a-zA-Z]
-LCase = [a-z]
 Digit = [0-9]
-DType = ({LCase}{LCase}*)
-Character = {Letter}
-IdChar = {Letter} | {Digit} | "_"
+Character = '{Letter}'
+IdChar = {Letter} | {Digit} | _
 Identifier = {Letter}{IdChar}*
-PosInteger = ([1-9]{Digit}*)
-Integer = -0 | 0 | PosInteger | "-"([1-9]{Digit}*)
-Float = {Integer}"."{Digit}* | "."{Digit}*
-Rational = {Integer}"/"{PosInteger} | {Integer}"_"{PosInteger}"/"{PosInteger}
+PosInteger = [1-9]{Digit}*
+Integer = -0 | 0 | {PosInteger} | -{PosInteger}
+Float = {Integer}\.{Digit}* | \.{Digit}*
+Rational = {Integer}\/{PosInteger} | {Integer}_{PosInteger}\/{PosInteger}
 
 %%
 <YYINITIAL> {
@@ -75,8 +73,8 @@ Rational = {Integer}"/"{PosInteger} | {Integer}"_"{PosInteger}"/"{PosInteger}
 	"char"			{ return symbol(sym.CHAR);}
 	"dict"			{ return symbol(sym.DICT);}
 	"int"			{ return symbol(sym.INT);}
-	"rat"			{ return symbol(sym.RAT);}
-	"float"			{ return symbol(sym.FLOAT);}
+	"rat"			{ return symbol(sym.KRAT);}
+	"float"			{ return symbol(sym.KFLOAT);}
 	"top"			{ return symbol(sym.TOP);}
 	"seq"			{ return symbol(sym.SEQ);}
 	"in"         	{ return symbol(sym.IN);        }
@@ -99,12 +97,12 @@ Rational = {Integer}"/"{PosInteger} | {Integer}"_"{PosInteger}"/"{PosInteger}
 	"fi"        	{ return symbol(sym.FI);        }
 	"len"        	{ return symbol(sym.LEN);        }
 	
+	{Rational}		{ return symbol(sym.RATIONAL, yytext());}
+	{Float} 	 	{ return symbol(sym.FLOAT, yytext());   }
 	{Integer}     	{ return symbol(sym.INTEGER,
                                 Integer.parseInt(yytext())); }
-	{Float} 	 	{ return symbol(sym.FLOAT, Float.parseFloat(yytext()));   }
 	{Character}		{ return symbol(sym.CHARACTER, yytext());}
 	{Identifier}  	{ return symbol(sym.IDENTIFIER, yytext());   }
-	{DType}	 	 	{ return symbol(sym.DType, yytext());   }
 
 	{Whitespace}  	{ /* do nothing */               }
 	"<="          	{ return symbol(sym.LESSOREQUAL);     }
@@ -133,6 +131,7 @@ Rational = {Integer}"/"{PosInteger} | {Integer}"_"{PosInteger}"/"{PosInteger}
 	">"				{ return symbol(sym.RARROW);	}
 	"::"			{ return symbol(sym.DCOLON);		}
 	":"				{ return symbol(sym.COLON);		}
+	","				{ return symbol(sym.COMMA);	}
 
 }
 

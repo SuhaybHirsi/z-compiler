@@ -57,24 +57,27 @@ parser code {:
 :};
 
 // Do something with ILLEGAL_CHARARCTER or drop it.
-terminal MAIN, BOOL, CHAR, DICT, INT, RAT, FLOAT, TOP, SEQ, IN, TRUE, FALSE, TDEF, FDEF, VOID, ALIAS, IF, ELIF, ELSE, FORALL, WHILE, READ, PRINT, RETURN, OD, DO, FI, LEN, LESSOREQUAL, ISEQUAL, NOTEQUAL, STARTCOMMENT, ENDCOMMENT, LCURLY, RCURLY, LSQUARE, RSQUARE, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV, LESSTHAN, LINECOMMENT, NOT, AND, OR, POWER, RARROW, DCOLON, COLON, INTEGER, IDENTIFIER, LET, CHARACTER, DTYPE;
+terminal MAIN, BOOL, CHAR, DICT, INT, RATIONAL, FLOAT, TOP, SEQ, IN, TRUE, FALSE, TDEF, FDEF, VOID, ALIAS, IF, ELIF, ELSE, FORALL, WHILE, READ, PRINT, RETURN, OD, DO, FI, LEN, LESSOREQUAL, ISEQUAL, NOTEQUAL, STARTCOMMENT, ENDCOMMENT, LCURLY, RCURLY, LSQUARE, RSQUARE, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV, LESSTHAN, LINECOMMENT, NOT, AND, OR, POWER, RARROW, DCOLON, COLON, INTEGER, IDENTIFIER, LET, CHARACTER, KFLOAT, KRAT, COMMA;
 terminal LPAREN, RPAREN;
 terminal BADCHAR;
 
-nonterminal statement, expr, func;
+nonterminal statement, expr, func, statements, function_call, argument, arguments;
 
 precedence left PLUS, MINUS;
 precedence left DIV, MULT;
 
 /* The grammar */
-func ::= MAIN LCURLY RETURN SEMICOL RCURLY SEMICOL
+func ::= MAIN LCURLY statements RCURLY SEMICOL;
+		
+statements ::= statements statement 
 		|
-		MAIN LCURLY statement RETURN SEMICOL RCURLY SEMICOL
-		|
-		MAIN LCURLY statement RCURLY SEMICOL;
-statement ::= expr SEMICOL;
+		;
+		
+statement ::= expr SEMICOL
+			|
+			function_call SEMICOL;
 
-expr ::= DTYPE expr EQUAL FLOAT
+expr ::= KFLOAT expr EQUAL FLOAT
 		|
 		IDENTIFIER
 		|
@@ -82,4 +85,27 @@ expr ::= DTYPE expr EQUAL FLOAT
 		|
 		FLOAT
 		|
-		INTEGER;
+		INTEGER
+		|
+		RETURN
+		|
+		RETURN expr;
+
+function_call ::= IDENTIFIER LPAREN arguments RPAREN
+				|
+				IDENTIFIER LPAREN RPAREN;
+
+arguments ::= argument COMMA arguments 
+			|
+			argument;
+		
+argument ::= FLOAT
+			|
+			INTEGER
+			|
+			CHARACTER
+			|
+			IDENTIFIER
+			|
+			RATIONAL;
+		

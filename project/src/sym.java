@@ -16,23 +16,25 @@ public class sym {
   public static final int LINECOMMENT = 46;
   public static final int INTEGER = 54;
   public static final int NOTEQUAL = 32;
-  public static final int LPAREN = 59;
-  public static final int BADCHAR = 61;
+  public static final int LPAREN = 61;
+  public static final int BADCHAR = 63;
+  public static final int KRAT = 59;
   public static final int INT = 6;
   public static final int MINUS = 42;
-  public static final int RPAREN = 60;
+  public static final int RPAREN = 62;
   public static final int CHARACTER = 57;
   public static final int AND = 48;
   public static final int NOT = 47;
+  public static final int RATIONAL = 7;
   public static final int OR = 49;
   public static final int LESSTHAN = 45;
   public static final int IN = 11;
   public static final int TDEF = 14;
+  public static final int COMMA = 60;
   public static final int BOOL = 3;
   public static final int SEMICOL = 40;
   public static final int FI = 28;
   public static final int DIV = 44;
-  public static final int RAT = 7;
   public static final int LESSOREQUAL = 30;
   public static final int PLUS = 41;
   public static final int MAIN = 2;
@@ -40,6 +42,7 @@ public class sym {
   public static final int EOF = 0;
   public static final int OD = 26;
   public static final int RETURN = 25;
+  public static final int KFLOAT = 58;
   public static final int EQUAL = 39;
   public static final int TRUE = 12;
   public static final int error = 1;
@@ -53,7 +56,6 @@ public class sym {
   public static final int COLON = 53;
   public static final int DICT = 5;
   public static final int ELSE = 20;
-  public static final int DTYPE = 58;
   public static final int LSQUARE = 37;
   public static final int READ = 23;
   public static final int DCOLON = 52;
@@ -76,7 +78,7 @@ public class sym {
   "CHAR",
   "DICT",
   "INT",
-  "RAT",
+  "RATIONAL",
   "FLOAT",
   "TOP",
   "SEQ",
@@ -127,7 +129,9 @@ public class sym {
   "IDENTIFIER",
   "LET",
   "CHARACTER",
-  "DTYPE",
+  "KFLOAT",
+  "KRAT",
+  "COMMA",
   "LPAREN",
   "RPAREN",
   "BADCHAR"
