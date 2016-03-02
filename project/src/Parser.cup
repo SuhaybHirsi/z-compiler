@@ -57,13 +57,14 @@ parser code {:
 :};
 
 // Do something with ILLEGAL_CHARARCTER or drop it.
-terminal MAIN, BOOL, CHAR, DICT, INT, RATIONAL, FLOAT, TOP, SEQ, IN, TRUE, FALSE, TDEF, FDEF, VOID, ALIAS, IF, ELIF, ELSE, FORALL, WHILE, READ, PRINT, RETURN, OD, DO, FI, LEN, LESSEQUAL, MOREEQUAL, ISEQUAL, NOTEQUAL, STARTCOMMENT, ENDCOMMENT, LCURLY, RCURLY, LSQUARE, RSQUARE, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV, LESSTHAN, LINECOMMENT, NOT, AND, OR, POWER, MORETHAN, DCOLON, COLON, INTEGER, IDENTIFIER, LET, CHARACTER, KFLOAT, KRAT, COMMA, THEN;
+terminal MAIN, BOOL, CHAR, DICT, INT, RATIONAL, FLOAT, TOP, SEQ, IN, TRUE, FALSE, TDEF, FDEF, VOID, ALIAS, IF, ELIF, ELSE, FORALL, WHILE, READ, PRINT, RETURN, OD, DO, FI, LEN, LESSEQUAL, MOREEQUAL, ISEQUAL, NOTEQUAL, STARTCOMMENT, ENDCOMMENT, LCURLY, RCURLY, LSQUARE, RSQUARE, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV, LESSTHAN, LINECOMMENT, NOT, AND, OR, POWER, MORETHAN, DCOLON, COLON, INTEGER, IDENTIFIER, LET, CHARACTER, KFLOAT, KRAT, COMMA, THEN, STRING;
 terminal LPAREN, RPAREN;
 terminal BADCHAR;
 
-nonterminal top_level, elifs, functions, statement, expr, exprs, sequence, main, func, statements, function_call, arguments, type, funcarguments, funcargument, operator, assignment;
+nonterminal top_level, elifs, functions, statement, expr, exprs, sequence, main, func, statements, function_call, arguments, type, funcarguments, funcargument, operator, assignment, keyvals;
 
 precedence left ISEQUAL, NOTEQUAL, LESSTHAN, LESSEQUAL, MORETHAN, MOREEQUAL, OR, AND, NOT;
+precedence left DCOLON;
 precedence left PLUS, MINUS;
 precedence left DIV, MULT;
 precedence left POWER;
@@ -74,13 +75,19 @@ top_level ::= functions main functions;
 
 functions ::= func functions
               |
+              assignment SEMICOL functions
+              |
               ;
 
 main ::= MAIN LCURLY statements RCURLY SEMICOL;
 
 func ::= FDEF type IDENTIFIER LPAREN funcarguments RPAREN LCURLY statements RCURLY SEMICOL
         |
-        FDEF type IDENTIFIER LPAREN RPAREN LCURLY statements RCURLY SEMICOL;
+        FDEF VOID IDENTIFIER LPAREN funcarguments RPAREN LCURLY statements RCURLY SEMICOL
+        |
+        FDEF type IDENTIFIER LPAREN RPAREN LCURLY statements RCURLY SEMICOL
+        |
+        FDEF VOID IDENTIFIER LPAREN RPAREN LCURLY statements RCURLY SEMICOL;
 		
 funcarguments ::= funcargument COMMA funcargument
                 |
@@ -91,14 +98,24 @@ funcargument ::= type IDENTIFIER;
 type ::= KFLOAT 
         | 
         KRAT 
+        |
+        BOOL
         | 
         INT 
         | 
         CHAR 
         | 
-        DICT /*dict stuff*/ 
+        DICT LESSTHAN type COMMA type MORETHAN
+        | 
+        DICT LESSTHAN TOP COMMA type MORETHAN
+        | 
+        DICT LESSTHAN type COMMA TOP MORETHAN
+        |
+        DICT LESSTHAN TOP COMMA TOP MORETHAN
         |
         SEQ LESSTHAN type MORETHAN
+        |
+        SEQ LESSTHAN TOP MORETHAN
         |
         IDENTIFIER /*for custom types*/;
 
@@ -109,6 +126,8 @@ statements ::= statements statement
 statement ::= expr SEMICOL
       |
       assignment SEMICOL
+      |
+      IDENTIFIER EQUAL expr SEMICOL //reassignment
       |
       READ IDENTIFIER SEMICOL
       |
@@ -128,11 +147,13 @@ statement ::= expr SEMICOL
       |
       RETURN expr SEMICOL;
 
-elifs ::= ELIF LPAREN expr RPAREN statements 
+elifs ::= ELIF LPAREN expr RPAREN THEN statements 
          |
-         ELIF LPAREN expr RPAREN statements elifs;
+         ELIF LPAREN expr RPAREN THEN statements elifs;
 
-assignment ::= type IDENTIFIER EQUAL expr;
+assignment ::= type IDENTIFIER EQUAL expr
+              |
+              type IDENTIFIER;
 
 expr ::= IDENTIFIER
 		|
@@ -144,17 +165,35 @@ expr ::= IDENTIFIER
     |
     RATIONAL
     |
+    STRING
+    |
+    TRUE
+    |
+    FALSE
+    |
+    LEN LPAREN IDENTIFIER RPAREN
+    |
     expr operator expr
     |
     LPAREN expr RPAREN
     |
     function_call
     |
-    sequence
+    LSQUARE exprs RSQUARE //init sequence
+    |
+    IDENTIFIER LSQUARE expr RSQUARE //access index in sequence
+    |
+    IDENTIFIER LSQUARE expr COLON expr RSQUARE
+    |
+    IDENTIFIER IN IDENTIFIER
+    |
+    LCURLY keyvals RCURLY
     |
     ;
 
-sequence ::= LSQUARE exprs RSQUARE;
+keyvals ::= expr COLON expr 
+            |
+            expr COLON expr COMMA keyvals;
 
 exprs ::= expr
         |
@@ -194,4 +233,6 @@ operator ::= PLUS
             |
             AND
             |
-            OR;
+            OR
+            |
+            DCOLON;

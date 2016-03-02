@@ -59,7 +59,7 @@ Whitespace = \r|\n|\r\n|" "|"\t"
 Letter = [a-zA-Z]
 Digit = [0-9]
 Char = .
-//String = .*
+String = .*
 IdChar = {Letter} | {Digit} | _
 Identifier = {Letter}{IdChar}*
 PosInteger = [1-9]{Digit}*
@@ -104,7 +104,7 @@ Rational = {Integer}\/{PosInteger} | {Integer}_{PosInteger}\/{PosInteger}
 	{Integer}     	{ return symbol(sym.INTEGER,
                                 Integer.parseInt(yytext())); }
 	"'"{Char}"'"	{ return symbol(sym.CHARACTER, yytext()); }
-	//"\""{String}"\""	{ return symbol(sym.CHARACTER, yytext()); }
+	"\""{String}"\""	{ return symbol(sym.CHARACTER, yytext()); }
 	{Identifier}  	{ return symbol(sym.IDENTIFIER, yytext());   }
 
 	{Whitespace}  	{ /* do nothing */               }
