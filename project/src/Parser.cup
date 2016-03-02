@@ -61,7 +61,7 @@ terminal MAIN, BOOL, CHAR, DICT, INT, RATIONAL, FLOAT, TOP, SEQ, IN, TRUE, FALSE
 terminal LPAREN, RPAREN;
 terminal BADCHAR;
 
-nonterminal top_level, elifs, functions, statement, expr, exprs, sequence, main, func, statements, function_call, arguments, type, funcarguments, funcargument, operator, assignment, keyvals;
+nonterminal top_level, elifs, functions, statement, expr, exprs, main, func, statements, function_call, arguments, type, funcarguments, funcargument, operator, assignment, keyvals, typedef, typeids;
 
 precedence left ISEQUAL, NOTEQUAL, LESSTHAN, LESSEQUAL, MORETHAN, MOREEQUAL, OR, AND, NOT;
 precedence left DCOLON;
@@ -77,7 +77,17 @@ functions ::= func functions
               |
               assignment SEMICOL functions
               |
+              typedef functions
+              |
+              ALIAS type type SEMICOL functions
+              |
               ;
+
+typedef ::= TDEF IDENTIFIER LCURLY typeids RCURLY SEMICOL;
+
+typeids ::= type IDENTIFIER
+            |
+            type IDENTIFIER COMMA typeids;
 
 main ::= MAIN LCURLY statements RCURLY SEMICOL;
 
@@ -145,7 +155,11 @@ statement ::= expr SEMICOL
       |
       FORALL LPAREN IDENTIFIER IN IDENTIFIER RPAREN DO statements OD
       |
-      RETURN expr SEMICOL;
+      RETURN expr SEMICOL
+      |
+      ALIAS type type SEMICOL
+      |
+      typedef;
 
 elifs ::= ELIF LPAREN expr RPAREN THEN statements 
          |
