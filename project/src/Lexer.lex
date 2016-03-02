@@ -17,8 +17,6 @@ import java_cup.runtime.*;
 
     System.out.print("<");
     switch(type){
-      case sym.LET:
-        System.out.print("LET"); break;
       case sym.EQUAL:
         System.out.print("="); break;
       case sym.SEMICOL:
@@ -55,7 +53,6 @@ import java_cup.runtime.*;
 %}
 
 Whitespace = \r|\n|\r\n|" "|"\t"
-
 Letter = [a-zA-Z]
 Digit = [0-9]
 Char = .
@@ -66,9 +63,12 @@ PosInteger = [1-9]{Digit}*
 Integer = 0 | {PosInteger}
 Float = {Integer}\.{Digit}* | \.{Digit}*
 Rational = {Integer}\/{PosInteger} | {Integer}_{PosInteger}\/{PosInteger}
+Comment = #.*"\n" | \/#.*#\/
 
 %%
 <YYINITIAL> {
+	{Comment}		{ /*return nothing*/ }
+
 	"main"			{ return symbol(sym.MAIN);}
 	"bool"			{ return symbol(sym.BOOL);}
 	"char"			{ return symbol(sym.CHAR);}
@@ -112,8 +112,6 @@ Rational = {Integer}\/{PosInteger} | {Integer}_{PosInteger}\/{PosInteger}
 	">="          	{ return symbol(sym.MOREEQUAL);     }
 	"=="          	{ return symbol(sym.ISEQUAL);     }
 	"!="          	{ return symbol(sym.NOTEQUAL);     }
-	"/#"          	{ return symbol(sym.STARTCOMMENT);     }
-	"#/"          	{ return symbol(sym.ENDCOMMENT);     }
 	"{"          	{ return symbol(sym.LCURLY);     }
 	"}"          	{ return symbol(sym.RCURLY);     }
 	"["          	{ return symbol(sym.LSQUARE);     }
@@ -128,7 +126,6 @@ Rational = {Integer}\/{PosInteger} | {Integer}_{PosInteger}\/{PosInteger}
 	")"          	{ return symbol(sym.RPAREN);     }
 	"<"          	{ return symbol(sym.LESSTHAN);     }
 	">"				{ return symbol(sym.MORETHAN);	}
-	"#"          	{ return symbol(sym.LINECOMMENT);     }
 	"!"          	{ return symbol(sym.NOT);     }
 	"&&"          	{ return symbol(sym.AND);     }
 	"||"          	{ return symbol(sym.OR);     }

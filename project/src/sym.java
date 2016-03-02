@@ -6,73 +6,69 @@
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int ENDCOMMENT = 35;
   public static final int SEQ = 10;
   public static final int FORALL = 21;
-  public static final int POWER = 51;
-  public static final int MULT = 44;
+  public static final int POWER = 48;
+  public static final int MULT = 42;
   public static final int CHAR = 4;
-  public static final int LINECOMMENT = 47;
-  public static final int INTEGER = 55;
+  public static final int INTEGER = 52;
   public static final int NOTEQUAL = 33;
-  public static final int LPAREN = 64;
-  public static final int BADCHAR = 66;
-  public static final int KRAT = 60;
+  public static final int LPAREN = 60;
+  public static final int BADCHAR = 62;
+  public static final int KRAT = 56;
   public static final int INT = 6;
-  public static final int MINUS = 43;
-  public static final int RPAREN = 65;
-  public static final int CHARACTER = 58;
-  public static final int AND = 49;
-  public static final int NOT = 48;
+  public static final int MINUS = 41;
+  public static final int RPAREN = 61;
+  public static final int CHARACTER = 54;
+  public static final int AND = 46;
+  public static final int NOT = 45;
   public static final int MOREEQUAL = 31;
   public static final int RATIONAL = 7;
   public static final int LESSEQUAL = 30;
-  public static final int OR = 50;
-  public static final int LESSTHAN = 46;
+  public static final int OR = 47;
+  public static final int LESSTHAN = 44;
   public static final int IN = 11;
   public static final int TDEF = 14;
-  public static final int COMMA = 61;
+  public static final int COMMA = 57;
   public static final int BOOL = 3;
-  public static final int SEMICOL = 41;
+  public static final int SEMICOL = 39;
   public static final int FI = 28;
-  public static final int DIV = 45;
-  public static final int PLUS = 42;
+  public static final int DIV = 43;
+  public static final int PLUS = 40;
   public static final int MAIN = 2;
   public static final int IF = 18;
   public static final int EOF = 0;
   public static final int OD = 26;
   public static final int RETURN = 25;
-  public static final int KFLOAT = 59;
-  public static final int EQUAL = 40;
+  public static final int KFLOAT = 55;
+  public static final int EQUAL = 38;
   public static final int TRUE = 12;
   public static final int error = 1;
   public static final int ISEQUAL = 32;
-  public static final int STARTCOMMENT = 34;
-  public static final int LCURLY = 36;
+  public static final int LCURLY = 34;
   public static final int FDEF = 15;
   public static final int VOID = 16;
-  public static final int RCURLY = 37;
+  public static final int RCURLY = 35;
   public static final int TOP = 9;
-  public static final int COLON = 54;
+  public static final int COLON = 51;
   public static final int DICT = 5;
   public static final int ELSE = 20;
-  public static final int LSQUARE = 38;
+  public static final int LSQUARE = 36;
   public static final int READ = 23;
-  public static final int DCOLON = 53;
-  public static final int RSQUARE = 39;
+  public static final int DCOLON = 50;
+  public static final int RSQUARE = 37;
   public static final int WHILE = 22;
-  public static final int MORETHAN = 52;
-  public static final int LET = 57;
+  public static final int MORETHAN = 49;
   public static final int FLOAT = 8;
-  public static final int THEN = 62;
-  public static final int STRING = 63;
+  public static final int THEN = 58;
+  public static final int STRING = 59;
   public static final int LEN = 29;
   public static final int ALIAS = 17;
   public static final int FALSE = 13;
   public static final int ELIF = 19;
   public static final int PRINT = 24;
   public static final int DO = 27;
-  public static final int IDENTIFIER = 56;
+  public static final int IDENTIFIER = 53;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
@@ -108,8 +104,6 @@ public class sym {
   "MOREEQUAL",
   "ISEQUAL",
   "NOTEQUAL",
-  "STARTCOMMENT",
-  "ENDCOMMENT",
   "LCURLY",
   "RCURLY",
   "LSQUARE",
@@ -121,7 +115,6 @@ public class sym {
   "MULT",
   "DIV",
   "LESSTHAN",
-  "LINECOMMENT",
   "NOT",
   "AND",
   "OR",
@@ -131,7 +124,6 @@ public class sym {
   "COLON",
   "INTEGER",
   "IDENTIFIER",
-  "LET",
   "CHARACTER",
   "KFLOAT",
   "KRAT",

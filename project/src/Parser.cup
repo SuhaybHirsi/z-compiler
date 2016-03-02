@@ -57,11 +57,11 @@ parser code {:
 :};
 
 // Do something with ILLEGAL_CHARARCTER or drop it.
-terminal MAIN, BOOL, CHAR, DICT, INT, RATIONAL, FLOAT, TOP, SEQ, IN, TRUE, FALSE, TDEF, FDEF, VOID, ALIAS, IF, ELIF, ELSE, FORALL, WHILE, READ, PRINT, RETURN, OD, DO, FI, LEN, LESSEQUAL, MOREEQUAL, ISEQUAL, NOTEQUAL, STARTCOMMENT, ENDCOMMENT, LCURLY, RCURLY, LSQUARE, RSQUARE, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV, LESSTHAN, LINECOMMENT, NOT, AND, OR, POWER, MORETHAN, DCOLON, COLON, INTEGER, IDENTIFIER, LET, CHARACTER, KFLOAT, KRAT, COMMA, THEN, STRING;
+terminal MAIN, BOOL, CHAR, DICT, INT, RATIONAL, FLOAT, TOP, SEQ, IN, TRUE, FALSE, TDEF, FDEF, VOID, ALIAS, IF, ELIF, ELSE, FORALL, WHILE, READ, PRINT, RETURN, OD, DO, FI, LEN, LESSEQUAL, MOREEQUAL, ISEQUAL, NOTEQUAL, LCURLY, RCURLY, LSQUARE, RSQUARE, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV, LESSTHAN, NOT, AND, OR, POWER, MORETHAN, DCOLON, COLON, INTEGER, IDENTIFIER, CHARACTER, KFLOAT, KRAT, COMMA, THEN, STRING;
 terminal LPAREN, RPAREN;
 terminal BADCHAR;
 
-nonterminal top_level, elifs, functions, statement, expr, exprs, main, func, statements, function_call, arguments, type, funcarguments, funcargument, operator, assignment, keyvals, typedef, typeids;
+nonterminal top_level, elifs, functions, statement, expr, exprs, main, func, statements, function_call, arguments, type, funcarguments, funcargument, operator, assignment, keyvals, typedef, typeids, index;
 
 precedence left ISEQUAL, NOTEQUAL, LESSTHAN, LESSEQUAL, MORETHAN, MOREEQUAL, OR, AND, NOT;
 precedence left DCOLON;
@@ -195,15 +195,19 @@ expr ::= IDENTIFIER
     |
     LSQUARE exprs RSQUARE //init sequence
     |
-    IDENTIFIER LSQUARE expr RSQUARE //access index in sequence
-    |
-    IDENTIFIER LSQUARE expr COLON expr RSQUARE
+    IDENTIFIER index //access index in sequence
     |
     IDENTIFIER IN IDENTIFIER
     |
     LCURLY keyvals RCURLY
     |
     ;
+
+index ::= LSQUARE expr RSQUARE
+          |
+          LSQUARE expr COLON expr RSQUARE
+          |
+          LSQUARE expr RSQUARE index;
 
 keyvals ::= expr COLON expr 
             |
