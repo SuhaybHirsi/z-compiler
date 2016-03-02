@@ -96,6 +96,7 @@ Rational = {Integer}\/{PosInteger} | {Integer}_{PosInteger}\/{PosInteger}
 	"do"        	{ return symbol(sym.DO);        }
 	"fi"        	{ return symbol(sym.FI);        }
 	"len"        	{ return symbol(sym.LEN);        }
+	"then"        	{ return symbol(sym.THEN);        }
 	
 	{Rational}		{ return symbol(sym.RATIONAL, yytext());}
 	{Float} 	 	{ return symbol(sym.FLOAT, yytext());   }

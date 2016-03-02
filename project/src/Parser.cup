@@ -57,55 +57,129 @@ parser code {:
 :};
 
 // Do something with ILLEGAL_CHARARCTER or drop it.
-terminal MAIN, BOOL, CHAR, DICT, INT, RATIONAL, FLOAT, TOP, SEQ, IN, TRUE, FALSE, TDEF, FDEF, VOID, ALIAS, IF, ELIF, ELSE, FORALL, WHILE, READ, PRINT, RETURN, OD, DO, FI, LEN, LESSOREQUAL, ISEQUAL, NOTEQUAL, STARTCOMMENT, ENDCOMMENT, LCURLY, RCURLY, LSQUARE, RSQUARE, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV, LESSTHAN, LINECOMMENT, NOT, AND, OR, POWER, RARROW, DCOLON, COLON, INTEGER, IDENTIFIER, LET, CHARACTER, KFLOAT, KRAT, COMMA;
+terminal MAIN, BOOL, CHAR, DICT, INT, RATIONAL, FLOAT, TOP, SEQ, IN, TRUE, FALSE, TDEF, FDEF, VOID, ALIAS, IF, ELIF, ELSE, FORALL, WHILE, READ, PRINT, RETURN, OD, DO, FI, LEN, LESSOREQUAL, ISEQUAL, NOTEQUAL, STARTCOMMENT, ENDCOMMENT, LCURLY, RCURLY, LSQUARE, RSQUARE, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV, LESSTHAN, LINECOMMENT, NOT, AND, OR, POWER, RARROW, DCOLON, COLON, INTEGER, IDENTIFIER, LET, CHARACTER, KFLOAT, KRAT, COMMA, THEN;
 terminal LPAREN, RPAREN;
 terminal BADCHAR;
 
-nonterminal statement, expr, func, statements, function_call, argument, arguments;
+nonterminal top_level, elifs, functions, statement, expr, main, func, statements, function_call, arguments, type, funcarguments, funcargument, operator, assignment;
 
+precedence left ISEQUAL, NOTEQUAL, LESSTHAN, LESSOREQUAL, OR, AND, NOT;
 precedence left PLUS, MINUS;
 precedence left DIV, MULT;
+precedence left POWER;
+precedence left LPAREN, RPAREN;
 
 /* The grammar */
-func ::= MAIN LCURLY statements RCURLY SEMICOL;
+top_level ::= functions main functions;
+
+functions ::= func functions
+              |
+              ;
+
+main ::= MAIN LCURLY statements RCURLY SEMICOL;
+
+func ::= FDEF type IDENTIFIER LPAREN funcarguments RPAREN LCURLY statements RCURLY SEMICOL
+        |
+        FDEF type IDENTIFIER LPAREN RPAREN LCURLY statements RCURLY SEMICOL;
 		
+funcarguments ::= funcargument COMMA funcargument
+                |
+                funcargument;
+
+funcargument ::= type IDENTIFIER;
+
+type ::= KFLOAT 
+        | 
+        KRAT 
+        | 
+        INT 
+        | 
+        CHAR 
+        | 
+        DICT /*dict stuff*/ 
+        |
+        SEQ /*seq stuff*/
+        |
+        IDENTIFIER /*for custom types*/;
+
 statements ::= statements statement 
 		|
-		;
+		statement;
 		
 statement ::= expr SEMICOL
-			|
-			function_call SEMICOL;
+      |
+      assignment SEMICOL
+      |
+      READ IDENTIFIER SEMICOL
+      |
+      PRINT expr SEMICOL
+      |
+      IF LPAREN expr RPAREN THEN statements FI
+      |
+      IF LPAREN expr RPAREN THEN statements ELSE statements FI
+      |
+      IF LPAREN expr RPAREN THEN statements elifs ELSE statements FI
+      |
+      IF LPAREN expr RPAREN THEN statements elifs FI
+      |
+      WHILE LPAREN expr RPAREN DO statements OD
+      |
+      FORALL LPAREN IDENTIFIER IN IDENTIFIER RPAREN DO statements OD
+      |
+      RETURN expr SEMICOL;
 
-expr ::= KFLOAT expr EQUAL FLOAT
-		|
-		IDENTIFIER
-		|
-		PRINT expr
+elifs ::= ELIF LPAREN expr RPAREN statements 
+         |
+         ELIF LPAREN expr RPAREN statements elifs;
+
+assignment ::= KFLOAT IDENTIFIER EQUAL expr;
+
+expr ::= IDENTIFIER
 		|
 		FLOAT
 		|
 		INTEGER
-		|
-		RETURN
-		|
-		RETURN expr;
+    |
+    CHARACTER
+    |
+    RATIONAL
+    |
+    expr operator expr
+    |
+    LPAREN expr RPAREN
+    |
+    function_call
+    |
+    ;
 
 function_call ::= IDENTIFIER LPAREN arguments RPAREN
 				|
 				IDENTIFIER LPAREN RPAREN;
 
-arguments ::= argument COMMA arguments 
+arguments ::= expr COMMA arguments 
 			|
-			argument;
-		
-argument ::= FLOAT
-			|
-			INTEGER
-			|
-			CHARACTER
-			|
-			IDENTIFIER
-			|
-			RATIONAL;
-		
+			expr;
+
+operator ::= PLUS
+            |
+            MINUS
+            |
+            MULT
+            |
+            DIV
+            |
+            ISEQUAL
+            |
+            NOTEQUAL
+            |
+            LESSOREQUAL
+            |
+            LESSTHAN
+            |
+            POWER
+            |
+            NOT
+            |
+            AND
+            |
+            OR;
