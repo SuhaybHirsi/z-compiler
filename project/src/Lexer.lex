@@ -58,11 +58,12 @@ Whitespace = \r|\n|\r\n|" "|"\t"
 
 Letter = [a-zA-Z]
 Digit = [0-9]
-Character = '{Letter}'
+Char = .
+//String = .*
 IdChar = {Letter} | {Digit} | _
 Identifier = {Letter}{IdChar}*
 PosInteger = [1-9]{Digit}*
-Integer = -0 | 0 | {PosInteger} | -{PosInteger}
+Integer = 0 | {PosInteger}
 Float = {Integer}\.{Digit}* | \.{Digit}*
 Rational = {Integer}\/{PosInteger} | {Integer}_{PosInteger}\/{PosInteger}
 
@@ -102,11 +103,13 @@ Rational = {Integer}\/{PosInteger} | {Integer}_{PosInteger}\/{PosInteger}
 	{Float} 	 	{ return symbol(sym.FLOAT, yytext());   }
 	{Integer}     	{ return symbol(sym.INTEGER,
                                 Integer.parseInt(yytext())); }
-	{Character}		{ return symbol(sym.CHARACTER, yytext());}
+	"'"{Char}"'"	{ return symbol(sym.CHARACTER, yytext()); }
+	//"\""{String}"\""	{ return symbol(sym.CHARACTER, yytext()); }
 	{Identifier}  	{ return symbol(sym.IDENTIFIER, yytext());   }
 
 	{Whitespace}  	{ /* do nothing */               }
-	"<="          	{ return symbol(sym.LESSOREQUAL);     }
+	"<="          	{ return symbol(sym.LESSEQUAL);     }
+	">="          	{ return symbol(sym.MOREEQUAL);     }
 	"=="          	{ return symbol(sym.ISEQUAL);     }
 	"!="          	{ return symbol(sym.NOTEQUAL);     }
 	"/#"          	{ return symbol(sym.STARTCOMMENT);     }
@@ -124,12 +127,12 @@ Rational = {Integer}\/{PosInteger} | {Integer}_{PosInteger}\/{PosInteger}
 	"("           	{ return symbol(sym.LPAREN);     }
 	")"          	{ return symbol(sym.RPAREN);     }
 	"<"          	{ return symbol(sym.LESSTHAN);     }
+	">"				{ return symbol(sym.MORETHAN);	}
 	"#"          	{ return symbol(sym.LINECOMMENT);     }
 	"!"          	{ return symbol(sym.NOT);     }
 	"&&"          	{ return symbol(sym.AND);     }
 	"||"          	{ return symbol(sym.OR);     }
 	"^"          	{ return symbol(sym.POWER);     }
-	">"				{ return symbol(sym.RARROW);	}
 	"::"			{ return symbol(sym.DCOLON);		}
 	":"				{ return symbol(sym.COLON);		}
 	","				{ return symbol(sym.COMMA);	}

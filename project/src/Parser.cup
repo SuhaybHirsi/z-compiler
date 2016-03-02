@@ -57,13 +57,13 @@ parser code {:
 :};
 
 // Do something with ILLEGAL_CHARARCTER or drop it.
-terminal MAIN, BOOL, CHAR, DICT, INT, RATIONAL, FLOAT, TOP, SEQ, IN, TRUE, FALSE, TDEF, FDEF, VOID, ALIAS, IF, ELIF, ELSE, FORALL, WHILE, READ, PRINT, RETURN, OD, DO, FI, LEN, LESSOREQUAL, ISEQUAL, NOTEQUAL, STARTCOMMENT, ENDCOMMENT, LCURLY, RCURLY, LSQUARE, RSQUARE, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV, LESSTHAN, LINECOMMENT, NOT, AND, OR, POWER, RARROW, DCOLON, COLON, INTEGER, IDENTIFIER, LET, CHARACTER, KFLOAT, KRAT, COMMA, THEN;
+terminal MAIN, BOOL, CHAR, DICT, INT, RATIONAL, FLOAT, TOP, SEQ, IN, TRUE, FALSE, TDEF, FDEF, VOID, ALIAS, IF, ELIF, ELSE, FORALL, WHILE, READ, PRINT, RETURN, OD, DO, FI, LEN, LESSEQUAL, MOREEQUAL, ISEQUAL, NOTEQUAL, STARTCOMMENT, ENDCOMMENT, LCURLY, RCURLY, LSQUARE, RSQUARE, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV, LESSTHAN, LINECOMMENT, NOT, AND, OR, POWER, MORETHAN, DCOLON, COLON, INTEGER, IDENTIFIER, LET, CHARACTER, KFLOAT, KRAT, COMMA, THEN;
 terminal LPAREN, RPAREN;
 terminal BADCHAR;
 
-nonterminal top_level, elifs, functions, statement, expr, main, func, statements, function_call, arguments, type, funcarguments, funcargument, operator, assignment;
+nonterminal top_level, elifs, functions, statement, expr, exprs, sequence, main, func, statements, function_call, arguments, type, funcarguments, funcargument, operator, assignment;
 
-precedence left ISEQUAL, NOTEQUAL, LESSTHAN, LESSOREQUAL, OR, AND, NOT;
+precedence left ISEQUAL, NOTEQUAL, LESSTHAN, LESSEQUAL, MORETHAN, MOREEQUAL, OR, AND, NOT;
 precedence left PLUS, MINUS;
 precedence left DIV, MULT;
 precedence left POWER;
@@ -98,7 +98,7 @@ type ::= KFLOAT
         | 
         DICT /*dict stuff*/ 
         |
-        SEQ /*seq stuff*/
+        SEQ LESSTHAN type MORETHAN
         |
         IDENTIFIER /*for custom types*/;
 
@@ -132,7 +132,7 @@ elifs ::= ELIF LPAREN expr RPAREN statements
          |
          ELIF LPAREN expr RPAREN statements elifs;
 
-assignment ::= KFLOAT IDENTIFIER EQUAL expr;
+assignment ::= type IDENTIFIER EQUAL expr;
 
 expr ::= IDENTIFIER
 		|
@@ -150,7 +150,15 @@ expr ::= IDENTIFIER
     |
     function_call
     |
+    sequence
+    |
     ;
+
+sequence ::= LSQUARE exprs RSQUARE;
+
+exprs ::= expr
+        |
+        expr COMMA exprs;
 
 function_call ::= IDENTIFIER LPAREN arguments RPAREN
 				|
@@ -172,9 +180,13 @@ operator ::= PLUS
             |
             NOTEQUAL
             |
-            LESSOREQUAL
+            LESSEQUAL
+            |
+            MOREEQUAL
             |
             LESSTHAN
+            |
+            MORETHAN
             |
             POWER
             |
