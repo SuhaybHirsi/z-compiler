@@ -57,11 +57,10 @@ parser code {:
 :};
 
 // Do something with ILLEGAL_CHARARCTER or drop it.
-terminal MAIN, BOOL, CHAR, DICT, INT, RATIONAL, FLOAT, TOP, SEQ, IN, TRUE, FALSE, TDEF, FDEF, VOID, ALIAS, IF, ELIF, ELSE, FORALL, WHILE, READ, PRINT, RETURN, OD, DO, FI, LEN, LESSEQUAL, MOREEQUAL, ISEQUAL, NOTEQUAL, LCURLY, RCURLY, LSQUARE, RSQUARE, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV, LESSTHAN, NOT, AND, OR, POWER, MORETHAN, DCOLON, COLON, INTEGER, IDENTIFIER, CHARACTER, KFLOAT, KRAT, COMMA, THEN, STRING;
-terminal LPAREN, RPAREN;
+terminal MAIN, BOOL, CHAR, DICT, INT, RATIONAL, FLOAT, TOP, SEQ, IN, TRUE, FALSE, TDEF, FDEF, VOID, ALIAS, IF, ELIF, ELSE, FORALL, WHILE, READ, PRINT, RETURN, OD, DO, FI, LEN, LESSEQUAL, MOREEQUAL, ISEQUAL, NOTEQUAL, LCURLY, RCURLY, LSQUARE, RSQUARE, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV, LESSTHAN, NOT, AND, OR, POWER, MORETHAN, DCOLON, COLON, INTEGER, IDENTIFIER, CHARACTER, KFLOAT, KRAT, COMMA, THEN, STRING, LPAREN, RPAREN;
 terminal BADCHAR;
 
-nonterminal top_level, elifs, functions, statement, expr, exprs, main, func, statements, function_call, arguments, type, funcarguments, funcargument, operator, assignment, keyvals, typedef, typeids, index;
+nonterminal top_level, elifs, functions, statement, expr, exprs, main, func, statements, function_call, type, funcarguments, funcargument, operator, assignment, keyvals, typedef, typeids, index, expr_no;
 
 precedence left ISEQUAL, NOTEQUAL, LESSTHAN, LESSEQUAL, MORETHAN, MOREEQUAL, OR, AND, NOT;
 precedence left DCOLON;
@@ -133,7 +132,7 @@ statements ::= statements statement
 		|
 		statement;
 		
-statement ::= expr SEMICOL
+statement ::= expr_no SEMICOL
       |
       assignment SEMICOL
       |
@@ -155,7 +154,7 @@ statement ::= expr SEMICOL
       |
       FORALL LPAREN IDENTIFIER IN IDENTIFIER RPAREN DO statements OD
       |
-      RETURN expr SEMICOL
+      RETURN expr_no SEMICOL
       |
       ALIAS type type SEMICOL
       |
@@ -169,15 +168,25 @@ assignment ::= type IDENTIFIER EQUAL expr
               |
               type IDENTIFIER;
 
+expr_no ::= expr
+            |
+            ;
+
 expr ::= IDENTIFIER
-		|
-		FLOAT
 		|
 		INTEGER
     |
-    CHARACTER
+    FLOAT
     |
     RATIONAL
+    |
+    MINUS INTEGER
+    |
+    MINUS FLOAT
+    |
+    MINUS RATIONAL
+    |
+    CHARACTER
     |
     STRING
     |
@@ -195,17 +204,17 @@ expr ::= IDENTIFIER
     |
     LSQUARE exprs RSQUARE //init sequence
     |
-    IDENTIFIER index //access index in sequence
+    LSQUARE RSQUARE
+    |
+    IDENTIFIER index //access index or indices in sequence
     |
     IDENTIFIER IN IDENTIFIER
     |
-    LCURLY keyvals RCURLY
-    |
-    ;
+    LCURLY keyvals RCURLY;
 
 index ::= LSQUARE expr RSQUARE
           |
-          LSQUARE expr COLON expr RSQUARE
+          LSQUARE expr_no COLON expr_no RSQUARE
           |
           LSQUARE expr RSQUARE index;
 
@@ -217,13 +226,9 @@ exprs ::= expr
         |
         expr COMMA exprs;
 
-function_call ::= IDENTIFIER LPAREN arguments RPAREN
+function_call ::= IDENTIFIER LPAREN exprs RPAREN
 				|
 				IDENTIFIER LPAREN RPAREN;
-
-arguments ::= expr COMMA arguments 
-			|
-			expr;
 
 operator ::= PLUS
             |

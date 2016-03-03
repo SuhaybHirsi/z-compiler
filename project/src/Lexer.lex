@@ -133,7 +133,6 @@ Comment = #.*"\n" | \/#.*#\/
 	"::"			{ return symbol(sym.DCOLON);		}
 	":"				{ return symbol(sym.COLON);		}
 	","				{ return symbol(sym.COMMA);	}
-
 }
 
 [^]  {
