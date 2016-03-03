@@ -5,39 +5,7 @@ scan with {: return lexer.next_token(); :};
 
 parser code {:
 
-  private boolean debug = false;
   public boolean syntaxErrors = false;
-
-  public boolean  debug()         {return debug;}
-  public void     debug(boolean b){debug = b;}
-
-  static class Node {
-    public ArrayList<Node> children;
-    private static int globalCounter = 0;
-
-    public int counter;
-    private Object value;
-
-    public Node(Object value){
-      Node.globalCounter += 1;
-      this.counter = Node.globalCounter;
-      this.value = value;
-      this.children = new ArrayList<Node>();
-    }
-
-    public void addChild(Node n){ children.add(n); }
-
-    public String toString(){
-      String ret = "";
-      ret += String.format("%d [label=\"%s\"];\n",
-                            counter, value.toString());
-      for(Node n: children){
-        ret += String.format("%d -> %d;\n", this.counter, n.counter);
-        ret += n.toString();
-      }
-      return ret;
-    }
-  }
 
   private Lexer lexer;
 
@@ -75,7 +43,7 @@ top_level ::= functions main functions;
 
 functions ::= functions func
               |
-              functions assignment SEMICOL //globals
+              functions assignment //globals
               |
               functions typedef
               |
@@ -130,42 +98,42 @@ statements ::= statements statement
               statement;
     
 statement ::= expr_no SEMICOL
-      |
-      assignment SEMICOL
-      |
-      IDENTIFIER EQUAL expr SEMICOL //reassignment 1
-      |
-      nested EQUAL expr SEMICOL //reassignment 2
-      |
-      READ IDENTIFIER SEMICOL
-      |
-      PRINT expr SEMICOL
-      |
-      IF LPAREN expr RPAREN THEN statements FI
-      |
-      IF LPAREN expr RPAREN THEN statements ELSE statements FI
-      |
-      IF LPAREN expr RPAREN THEN statements elif ELSE statements FI
-      |
-      IF LPAREN expr RPAREN THEN statements elif FI
-      |
-      WHILE LPAREN expr RPAREN DO statements OD
-      |
-      FORALL LPAREN IDENTIFIER IN IDENTIFIER RPAREN DO statements OD
-      |
-      RETURN expr_no SEMICOL
-      |
-      ALIAS type type SEMICOL
-      |
-      typedef;
+              |
+              assignment
+              |
+              IDENTIFIER EQUAL expr SEMICOL //reassignment 1
+              |
+              nested EQUAL expr SEMICOL //reassignment 2
+              |
+              READ IDENTIFIER SEMICOL
+              |
+              PRINT expr SEMICOL
+              |
+              IF LPAREN expr RPAREN THEN statements FI
+              |
+              IF LPAREN expr RPAREN THEN statements ELSE statements FI
+              |
+              IF LPAREN expr RPAREN THEN statements elif ELSE statements FI
+              |
+              IF LPAREN expr RPAREN THEN statements elif FI
+              |
+              WHILE LPAREN expr RPAREN DO statements OD
+              |
+              FORALL LPAREN IDENTIFIER IN IDENTIFIER RPAREN DO statements OD
+              |
+              RETURN expr_no SEMICOL
+              |
+              ALIAS type type SEMICOL
+              |
+              typedef;
 
 elif ::= ELIF LPAREN expr RPAREN THEN statements 
          |
-         ELIF LPAREN expr RPAREN THEN statements elif;
+         elif ELIF LPAREN expr RPAREN THEN statements;
 
-assignment ::= type IDENTIFIER EQUAL exprs
+assignment ::= type IDENTIFIER EQUAL exprs SEMICOL
               |
-              type IDENTIFIER;
+              type IDENTIFIER SEMICOL;
 
 expr_no ::= expr
             |
@@ -200,6 +168,8 @@ expr ::= IDENTIFIER
         IDENTIFIER IN IDENTIFIER
         |
         LCURLY keyvals RCURLY //init dictionary
+        |
+        LCURLY RCURLY
         |
         nested;
 

@@ -338,45 +338,12 @@ class Lexer implements java_cup.runtime.Scanner {
   private int zzFinalHighSurrogate = 0;
 
   /* user code: */
-  private boolean debug_mode;
-  public  boolean debug()            { return debug_mode; }
-  public  void    debug(boolean mode){ debug_mode = mode; }
-
-  private void print_lexeme(int type, Object value){
-    if(!debug()){ return; }
-
-    System.out.print("<");
-    switch(type){
-      case sym.EQUAL:
-        System.out.print("="); break;
-      case sym.SEMICOL:
-        System.out.print(";"); break;
-      case sym.PLUS:
-        System.out.print("+"); break;
-      case sym.MINUS:
-        System.out.print("-"); break;
-      case sym.MULT:
-        System.out.print("*"); break;
-      case sym.DIV:
-        System.out.print("/"); break;
-      case sym.LPAREN:
-        System.out.print("("); break;
-      case sym.RPAREN:
-        System.out.print(")"); break;
-      case sym.INTEGER:
-        System.out.printf("INT %d", value); break;
-      case sym.IDENTIFIER:
-        System.out.printf("IDENT %s", value); break;
-    }
-    System.out.print(">  ");
-  }
-
+  
   private Symbol symbol(int type) {
-    print_lexeme(type, null);
     return new Symbol(type, yyline, yycolumn);
   }
+  
   private Symbol symbol(int type, Object value) {
-    print_lexeme(type, value);
     return new Symbol(type, yyline, yycolumn, value);
   }
 
