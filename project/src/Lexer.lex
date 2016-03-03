@@ -70,10 +70,10 @@ Comment = #.*"\n" | \/#.*#\/
 	{Comment}		{ /*return nothing*/ }
 
 	"main"			{ return symbol(sym.MAIN);}
-	"bool"			{ return symbol(sym.BOOL);}
-	"char"			{ return symbol(sym.CHAR);}
+	"bool"			{ return symbol(sym.KBOOL);}
+	"char"			{ return symbol(sym.KCHAR);}
 	"dict"			{ return symbol(sym.DICT);}
-	"int"			{ return symbol(sym.INT);}
+	"int"			{ return symbol(sym.KINT);}
 	"rat"			{ return symbol(sym.KRAT);}
 	"float"			{ return symbol(sym.KFLOAT);}
 	"top"			{ return symbol(sym.TOP);}

@@ -57,12 +57,13 @@ parser code {:
 :};
 
 // Do something with ILLEGAL_CHARARCTER or drop it.
-terminal MAIN, BOOL, CHAR, DICT, INT, RATIONAL, FLOAT, TOP, SEQ, IN, TRUE, FALSE, TDEF, FDEF, VOID, ALIAS, IF, ELIF, ELSE, FORALL, WHILE, READ, PRINT, RETURN, OD, DO, FI, LEN, LESSEQUAL, MOREEQUAL, ISEQUAL, NOTEQUAL, LCURLY, RCURLY, LSQUARE, RSQUARE, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV, LESSTHAN, NOT, AND, OR, POWER, MORETHAN, DCOLON, COLON, INTEGER, IDENTIFIER, CHARACTER, KFLOAT, KRAT, COMMA, THEN, STRING, LPAREN, RPAREN;
+terminal MAIN, KBOOL, KCHAR, DICT, KINT, RATIONAL, FLOAT, TOP, SEQ, IN, TRUE, FALSE, TDEF, FDEF, VOID, ALIAS, IF, ELIF, ELSE, FORALL, WHILE, READ, PRINT, RETURN, OD, DO, FI, LEN, LESSEQUAL, MOREEQUAL, ISEQUAL, NOTEQUAL, LCURLY, RCURLY, LSQUARE, RSQUARE, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV, LESSTHAN, NOT, AND, OR, POWER, MORETHAN, DCOLON, COLON, INTEGER, IDENTIFIER, CHARACTER, KFLOAT, KRAT, COMMA, THEN, STRING, LPAREN, RPAREN;
 terminal BADCHAR;
 
-nonterminal top_level, elifs, functions, statement, expr, exprs, main, func, statements, function_call, type, funcarguments, funcargument, operator, assignment, keyvals, typedef, typeids, index, expr_no;
+nonterminal top_level, elif, functions, statement, expr, exprs, main, func, statements, function_call, type, operator, assignment, keyvals, typedef, typeids, index, expr_no, numeric;
 
-precedence left ISEQUAL, NOTEQUAL, LESSTHAN, LESSEQUAL, MORETHAN, MOREEQUAL, OR, AND, NOT;
+precedence left OR, AND, NOT;
+precedence left ISEQUAL, NOTEQUAL, LESSTHAN, LESSEQUAL, MORETHAN, MOREEQUAL;
 precedence left DCOLON;
 precedence left PLUS, MINUS;
 precedence left DIV, MULT;
@@ -90,29 +91,23 @@ typeids ::= type IDENTIFIER
 
 main ::= MAIN LCURLY statements RCURLY SEMICOL;
 
-func ::= FDEF type IDENTIFIER LPAREN funcarguments RPAREN LCURLY statements RCURLY SEMICOL
+func ::= FDEF type IDENTIFIER LPAREN typeids RPAREN LCURLY statements RCURLY SEMICOL
         |
-        FDEF VOID IDENTIFIER LPAREN funcarguments RPAREN LCURLY statements RCURLY SEMICOL
+        FDEF VOID IDENTIFIER LPAREN typeids RPAREN LCURLY statements RCURLY SEMICOL
         |
         FDEF type IDENTIFIER LPAREN RPAREN LCURLY statements RCURLY SEMICOL
         |
         FDEF VOID IDENTIFIER LPAREN RPAREN LCURLY statements RCURLY SEMICOL;
-		
-funcarguments ::= funcargument COMMA funcargument
-                |
-                funcargument;
-
-funcargument ::= type IDENTIFIER;
 
 type ::= KFLOAT 
         | 
         KRAT 
         |
-        BOOL
+        KBOOL
         | 
-        INT 
+        KINT 
         | 
-        CHAR 
+        KCHAR 
         | 
         DICT LESSTHAN type COMMA type MORETHAN
         | 
@@ -146,9 +141,9 @@ statement ::= expr_no SEMICOL
       |
       IF LPAREN expr RPAREN THEN statements ELSE statements FI
       |
-      IF LPAREN expr RPAREN THEN statements elifs ELSE statements FI
+      IF LPAREN expr RPAREN THEN statements elif ELSE statements FI
       |
-      IF LPAREN expr RPAREN THEN statements elifs FI
+      IF LPAREN expr RPAREN THEN statements elif FI
       |
       WHILE LPAREN expr RPAREN DO statements OD
       |
@@ -160,9 +155,9 @@ statement ::= expr_no SEMICOL
       |
       typedef;
 
-elifs ::= ELIF LPAREN expr RPAREN THEN statements 
+elif ::= ELIF LPAREN expr RPAREN THEN statements 
          |
-         ELIF LPAREN expr RPAREN THEN statements elifs;
+         ELIF LPAREN expr RPAREN THEN statements elif;
 
 assignment ::= type IDENTIFIER EQUAL expr
               |
@@ -174,17 +169,7 @@ expr_no ::= expr
 
 expr ::= IDENTIFIER
 		|
-		INTEGER
-    |
-    FLOAT
-    |
-    RATIONAL
-    |
-    MINUS INTEGER
-    |
-    MINUS FLOAT
-    |
-    MINUS RATIONAL
+		numeric
     |
     CHARACTER
     |
@@ -211,6 +196,14 @@ expr ::= IDENTIFIER
     IDENTIFIER IN IDENTIFIER
     |
     LCURLY keyvals RCURLY;
+
+numeric ::= INTEGER
+            |
+            FLOAT
+            |
+            RATIONAL
+            |
+            MINUS numeric;
 
 index ::= LSQUARE expr RSQUARE
           |
