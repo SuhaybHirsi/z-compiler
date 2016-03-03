@@ -869,7 +869,8 @@ class Lexer implements java_cup.runtime.Scanner {
             }
           case 88: break;
           case 26: 
-            { return symbol(sym.FLOAT, yytext());
+            { return symbol(sym.FLOAT, 
+                                Float.parseFloat(yytext()));
             }
           case 89: break;
           case 27: 

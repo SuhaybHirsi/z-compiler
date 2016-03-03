@@ -51,7 +51,7 @@ parser code {:
     "Syntax error at line " + (current_token.left+1) + ", column "
     + current_token.right, null
     );
-	syntaxErrors = true;
+  syntaxErrors = true;
   }
 
 :};
@@ -126,9 +126,9 @@ type ::= KFLOAT
         IDENTIFIER /*for custom types*/;
 
 statements ::= statements statement 
-		|
-		statement;
-		
+              |
+              statement;
+    
 statement ::= expr_no SEMICOL
       |
       assignment SEMICOL
@@ -172,36 +172,36 @@ expr_no ::= expr
             ;
 
 expr ::= IDENTIFIER
-		|
-		numeric
-    |
-    CHARACTER
-    |
-    STRING
-    |
-    TRUE
-    |
-    FALSE
-    |
-    LEN LPAREN IDENTIFIER RPAREN //len()
-    |
-    expr operator expr
-    |
-    LPAREN expr RPAREN
-    |
-    function_call
-    |
-    LSQUARE exprs RSQUARE //init sequence
-    |
-    LSQUARE RSQUARE
-    |
-    IDENTIFIER index //access index or indices in sequence
-    |
-    IDENTIFIER IN IDENTIFIER
-    |
-    LCURLY keyvals RCURLY //init dictionary
-    |
-    nested;
+        |
+        numeric
+        |
+        CHARACTER
+        |
+        STRING
+        |
+        TRUE
+        |
+        FALSE
+        |
+        LEN LPAREN IDENTIFIER RPAREN //len()
+        |
+        expr operator expr
+        |
+        LPAREN expr RPAREN
+        |
+        function_call
+        |
+        LSQUARE exprs RSQUARE //init sequence
+        |
+        LSQUARE RSQUARE
+        |
+        IDENTIFIER index //access index or indices in sequence
+        |
+        IDENTIFIER IN IDENTIFIER
+        |
+        LCURLY keyvals RCURLY //init dictionary
+        |
+        nested;
 
 nested ::= IDENTIFIER DOT IDENTIFIER
            |
@@ -219,19 +219,21 @@ index ::= LSQUARE expr RSQUARE
           |
           LSQUARE expr_no COLON expr_no RSQUARE
           |
-          index LSQUARE expr RSQUARE;
+          index LSQUARE expr RSQUARE
+          |
+          index LSQUARE expr_no COLON expr_no RSQUARE;
 
 keyvals ::= expr COLON expr 
             |
             keyvals COMMA expr COLON expr;
 
 exprs ::= expr
-        |
-        exprs COMMA expr;
+          |
+          exprs COMMA expr;
 
 function_call ::= IDENTIFIER LPAREN exprs RPAREN
-				|
-				IDENTIFIER LPAREN RPAREN;
+                  |
+                  IDENTIFIER LPAREN RPAREN;
 
 operator ::= PLUS
             |
