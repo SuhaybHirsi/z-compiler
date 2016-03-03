@@ -51,19 +51,19 @@ parser code {:
     "Syntax error at line " + (current_token.left+1) + ", column "
     + current_token.right, null
     );
-	syntaxErrors = true;
+  syntaxErrors = true;
   }
 
 :};
 
 // Do something with ILLEGAL_CHARARCTER or drop it.
-terminal MAIN, BOOL, CHAR, DICT, INT, RATIONAL, FLOAT, TOP, SEQ, IN, TRUE, FALSE, TDEF, FDEF, VOID, ALIAS, IF, ELIF, ELSE, FORALL, WHILE, READ, PRINT, RETURN, OD, DO, FI, LEN, LESSEQUAL, MOREEQUAL, ISEQUAL, NOTEQUAL, LCURLY, RCURLY, LSQUARE, RSQUARE, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV, LESSTHAN, NOT, AND, OR, POWER, MORETHAN, DCOLON, COLON, INTEGER, IDENTIFIER, CHARACTER, KFLOAT, KRAT, COMMA, THEN, STRING;
-terminal LPAREN, RPAREN;
+terminal MAIN, KBOOL, KCHAR, DICT, KINT, RATIONAL, FLOAT, TOP, SEQ, IN, TRUE, FALSE, TDEF, FDEF, VOID, ALIAS, IF, ELIF, ELSE, FORALL, WHILE, READ, PRINT, RETURN, OD, DO, FI, LEN, LESSEQUAL, MOREEQUAL, ISEQUAL, NOTEQUAL, LCURLY, RCURLY, LSQUARE, RSQUARE, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV, LESSTHAN, NOT, AND, OR, POWER, MORETHAN, DCOLON, COLON, INTEGER, IDENTIFIER, CHARACTER, KFLOAT, KRAT, COMMA, THEN, STRING, LPAREN, RPAREN, DOT;
 terminal BADCHAR;
 
-nonterminal top_level, elifs, functions, statement, expr, exprs, main, func, statements, function_call, arguments, type, funcarguments, funcargument, operator, assignment, keyvals, typedef, typeids, index;
+nonterminal top_level, elif, functions, statement, expr, exprs, main, func, statements, function_call, type, operator, assignment, keyvals, typedef, typeids, index, expr_no, numeric, nested, alias;
 
-precedence left ISEQUAL, NOTEQUAL, LESSTHAN, LESSEQUAL, MORETHAN, MOREEQUAL, OR, AND, NOT;
+precedence left OR, AND, NOT;
+precedence left ISEQUAL, NOTEQUAL, LESSTHAN, LESSEQUAL, MORETHAN, MOREEQUAL;
 precedence left DCOLON;
 precedence left PLUS, MINUS;
 precedence left DIV, MULT;
@@ -73,47 +73,43 @@ precedence left LPAREN, RPAREN;
 /* The grammar */
 top_level ::= functions main functions;
 
-functions ::= func functions
+functions ::= functions func
               |
-              assignment SEMICOL functions
+              functions assignment SEMICOL //globals
               |
-              typedef functions
+              functions typedef
               |
-              ALIAS type type SEMICOL functions
+              functions alias
               |
               ;
+
+alias ::= ALIAS type type SEMICOL;
 
 typedef ::= TDEF IDENTIFIER LCURLY typeids RCURLY SEMICOL;
 
 typeids ::= type IDENTIFIER
             |
-            type IDENTIFIER COMMA typeids;
+            typeids COMMA type IDENTIFIER;
 
 main ::= MAIN LCURLY statements RCURLY SEMICOL;
 
-func ::= FDEF type IDENTIFIER LPAREN funcarguments RPAREN LCURLY statements RCURLY SEMICOL
+func ::= FDEF type IDENTIFIER LPAREN typeids RPAREN LCURLY statements RCURLY SEMICOL
         |
-        FDEF VOID IDENTIFIER LPAREN funcarguments RPAREN LCURLY statements RCURLY SEMICOL
+        FDEF VOID IDENTIFIER LPAREN typeids RPAREN LCURLY statements RCURLY SEMICOL
         |
         FDEF type IDENTIFIER LPAREN RPAREN LCURLY statements RCURLY SEMICOL
         |
         FDEF VOID IDENTIFIER LPAREN RPAREN LCURLY statements RCURLY SEMICOL;
-		
-funcarguments ::= funcargument COMMA funcargument
-                |
-                funcargument;
-
-funcargument ::= type IDENTIFIER;
 
 type ::= KFLOAT 
         | 
         KRAT 
         |
-        BOOL
+        KBOOL
         | 
-        INT 
+        KINT 
         | 
-        CHAR 
+        KCHAR 
         | 
         DICT LESSTHAN type COMMA type MORETHAN
         | 
@@ -130,14 +126,16 @@ type ::= KFLOAT
         IDENTIFIER /*for custom types*/;
 
 statements ::= statements statement 
-		|
-		statement;
-		
-statement ::= expr SEMICOL
+              |
+              statement;
+    
+statement ::= expr_no SEMICOL
       |
       assignment SEMICOL
       |
-      IDENTIFIER EQUAL expr SEMICOL //reassignment
+      IDENTIFIER EQUAL expr SEMICOL //reassignment 1
+      |
+      nested EQUAL expr SEMICOL //reassignment 2
       |
       READ IDENTIFIER SEMICOL
       |
@@ -147,83 +145,95 @@ statement ::= expr SEMICOL
       |
       IF LPAREN expr RPAREN THEN statements ELSE statements FI
       |
-      IF LPAREN expr RPAREN THEN statements elifs ELSE statements FI
+      IF LPAREN expr RPAREN THEN statements elif ELSE statements FI
       |
-      IF LPAREN expr RPAREN THEN statements elifs FI
+      IF LPAREN expr RPAREN THEN statements elif FI
       |
       WHILE LPAREN expr RPAREN DO statements OD
       |
       FORALL LPAREN IDENTIFIER IN IDENTIFIER RPAREN DO statements OD
       |
-      RETURN expr SEMICOL
+      RETURN expr_no SEMICOL
       |
       ALIAS type type SEMICOL
       |
       typedef;
 
-elifs ::= ELIF LPAREN expr RPAREN THEN statements 
+elif ::= ELIF LPAREN expr RPAREN THEN statements 
          |
-         ELIF LPAREN expr RPAREN THEN statements elifs;
+         ELIF LPAREN expr RPAREN THEN statements elif;
 
-assignment ::= type IDENTIFIER EQUAL expr
+assignment ::= type IDENTIFIER EQUAL exprs
               |
               type IDENTIFIER;
 
+expr_no ::= expr
+            |
+            ;
+
 expr ::= IDENTIFIER
-		|
-		FLOAT
-		|
-		INTEGER
-    |
-    CHARACTER
-    |
-    RATIONAL
-    |
-    STRING
-    |
-    TRUE
-    |
-    FALSE
-    |
-    LEN LPAREN IDENTIFIER RPAREN
-    |
-    expr operator expr
-    |
-    LPAREN expr RPAREN
-    |
-    function_call
-    |
-    LSQUARE exprs RSQUARE //init sequence
-    |
-    IDENTIFIER index //access index in sequence
-    |
-    IDENTIFIER IN IDENTIFIER
-    |
-    LCURLY keyvals RCURLY
-    |
-    ;
+        |
+        numeric
+        |
+        CHARACTER
+        |
+        STRING
+        |
+        TRUE
+        |
+        FALSE
+        |
+        LEN LPAREN IDENTIFIER RPAREN //len()
+        |
+        expr operator expr
+        |
+        LPAREN expr RPAREN
+        |
+        function_call
+        |
+        LSQUARE exprs RSQUARE //init sequence
+        |
+        LSQUARE RSQUARE
+        |
+        IDENTIFIER index //access index or indices in sequence
+        |
+        IDENTIFIER IN IDENTIFIER
+        |
+        LCURLY keyvals RCURLY //init dictionary
+        |
+        nested;
+
+nested ::= IDENTIFIER DOT IDENTIFIER
+           |
+           nested DOT IDENTIFIER;
+
+numeric ::= INTEGER
+            |
+            FLOAT
+            |
+            RATIONAL
+            |
+            MINUS numeric;
 
 index ::= LSQUARE expr RSQUARE
           |
-          LSQUARE expr COLON expr RSQUARE
+          LSQUARE expr_no COLON expr_no RSQUARE
           |
-          LSQUARE expr RSQUARE index;
+          index LSQUARE expr RSQUARE
+          |
+          index LSQUARE expr_no COLON expr_no RSQUARE;
 
 keyvals ::= expr COLON expr 
             |
-            expr COLON expr COMMA keyvals;
+            keyvals COMMA expr COLON expr;
 
 exprs ::= expr
-        |
-        expr COMMA exprs;
+          |
+          exprs COMMA expr;
 
-function_call ::= IDENTIFIER LPAREN arguments RPAREN
-				|
-				IDENTIFIER LPAREN RPAREN;
-
-arguments ::= expr COMMA arguments 
-			|
-			expr;
+function_call ::= IDENTIFIER LPAREN exprs RPAREN
+                  |
+                  IDENTIFIER LPAREN RPAREN;
 
 operator ::= PLUS
             |
