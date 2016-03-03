@@ -1,0 +1,5 @@
+1. For the rat numbers like 17_3/7, we assumed the this was meant as 17 and three sevenths. 
+2. We assumed that it's possbile to declare variables, aliases and other statements as global.
+3. We assumed that a string is enclosed in double quotation marks.
+4. We assumed that > and >= can also be used as operators as only < and <= are defined in the pdf file.
+5. We assumed that a char is a single character enclosed in single quotation marks.
