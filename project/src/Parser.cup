@@ -60,7 +60,7 @@ parser code {:
 terminal MAIN, KBOOL, KCHAR, DICT, KINT, RATIONAL, FLOAT, TOP, SEQ, IN, TRUE, FALSE, TDEF, FDEF, VOID, ALIAS, IF, ELIF, ELSE, FORALL, WHILE, READ, PRINT, RETURN, OD, DO, FI, LEN, LESSEQUAL, MOREEQUAL, ISEQUAL, NOTEQUAL, LCURLY, RCURLY, LSQUARE, RSQUARE, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV, LESSTHAN, NOT, AND, OR, POWER, MORETHAN, DCOLON, COLON, INTEGER, IDENTIFIER, CHARACTER, KFLOAT, KRAT, COMMA, THEN, STRING, LPAREN, RPAREN, DOT;
 terminal BADCHAR;
 
-nonterminal top_level, elif, functions, statement, expr, exprs, main, func, statements, function_call, type, operator, assignment, keyvals, typedef, typeids, index, expr_no, numeric, nested;
+nonterminal top_level, elif, functions, statement, expr, exprs, main, func, statements, function_call, type, operator, assignment, keyvals, typedef, typeids, index, expr_no, numeric, nested, alias;
 
 precedence left OR, AND, NOT;
 precedence left ISEQUAL, NOTEQUAL, LESSTHAN, LESSEQUAL, MORETHAN, MOREEQUAL;
@@ -73,21 +73,23 @@ precedence left LPAREN, RPAREN;
 /* The grammar */
 top_level ::= functions main functions;
 
-functions ::= func functions
+functions ::= functions func
               |
-              assignment SEMICOL functions //globals
+              functions assignment SEMICOL //globals
               |
-              typedef functions
+              functions typedef
               |
-              ALIAS type type SEMICOL functions
+              functions alias
               |
               ;
+
+alias ::= ALIAS type type SEMICOL;
 
 typedef ::= TDEF IDENTIFIER LCURLY typeids RCURLY SEMICOL;
 
 typeids ::= type IDENTIFIER
             |
-            type IDENTIFIER COMMA typeids;
+            typeids COMMA type IDENTIFIER;
 
 main ::= MAIN LCURLY statements RCURLY SEMICOL;
 
@@ -217,15 +219,15 @@ index ::= LSQUARE expr RSQUARE
           |
           LSQUARE expr_no COLON expr_no RSQUARE
           |
-          LSQUARE expr RSQUARE index;
+          index LSQUARE expr RSQUARE;
 
 keyvals ::= expr COLON expr 
             |
-            expr COLON expr COMMA keyvals;
+            keyvals COMMA expr COLON expr;
 
 exprs ::= expr
         |
-        expr COMMA exprs;
+        exprs COMMA expr;
 
 function_call ::= IDENTIFIER LPAREN exprs RPAREN
 				|
