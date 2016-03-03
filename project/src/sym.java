@@ -13,7 +13,7 @@ public class sym {
   public static final int INTEGER = 52;
   public static final int NOTEQUAL = 33;
   public static final int LPAREN = 60;
-  public static final int BADCHAR = 62;
+  public static final int BADCHAR = 63;
   public static final int KRAT = 56;
   public static final int MINUS = 41;
   public static final int RPAREN = 61;
@@ -34,6 +34,7 @@ public class sym {
   public static final int PLUS = 40;
   public static final int MAIN = 2;
   public static final int IF = 18;
+  public static final int DOT = 62;
   public static final int EOF = 0;
   public static final int OD = 26;
   public static final int RETURN = 25;
@@ -132,6 +133,7 @@ public class sym {
   "STRING",
   "LPAREN",
   "RPAREN",
+  "DOT",
   "BADCHAR"
   };
 }

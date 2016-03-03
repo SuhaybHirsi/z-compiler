@@ -57,10 +57,10 @@ parser code {:
 :};
 
 // Do something with ILLEGAL_CHARARCTER or drop it.
-terminal MAIN, KBOOL, KCHAR, DICT, KINT, RATIONAL, FLOAT, TOP, SEQ, IN, TRUE, FALSE, TDEF, FDEF, VOID, ALIAS, IF, ELIF, ELSE, FORALL, WHILE, READ, PRINT, RETURN, OD, DO, FI, LEN, LESSEQUAL, MOREEQUAL, ISEQUAL, NOTEQUAL, LCURLY, RCURLY, LSQUARE, RSQUARE, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV, LESSTHAN, NOT, AND, OR, POWER, MORETHAN, DCOLON, COLON, INTEGER, IDENTIFIER, CHARACTER, KFLOAT, KRAT, COMMA, THEN, STRING, LPAREN, RPAREN;
+terminal MAIN, KBOOL, KCHAR, DICT, KINT, RATIONAL, FLOAT, TOP, SEQ, IN, TRUE, FALSE, TDEF, FDEF, VOID, ALIAS, IF, ELIF, ELSE, FORALL, WHILE, READ, PRINT, RETURN, OD, DO, FI, LEN, LESSEQUAL, MOREEQUAL, ISEQUAL, NOTEQUAL, LCURLY, RCURLY, LSQUARE, RSQUARE, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV, LESSTHAN, NOT, AND, OR, POWER, MORETHAN, DCOLON, COLON, INTEGER, IDENTIFIER, CHARACTER, KFLOAT, KRAT, COMMA, THEN, STRING, LPAREN, RPAREN, DOT;
 terminal BADCHAR;
 
-nonterminal top_level, elif, functions, statement, expr, exprs, main, func, statements, function_call, type, operator, assignment, keyvals, typedef, typeids, index, expr_no, numeric;
+nonterminal top_level, elif, functions, statement, expr, exprs, main, func, statements, function_call, type, operator, assignment, keyvals, typedef, typeids, index, expr_no, numeric, nested;
 
 precedence left OR, AND, NOT;
 precedence left ISEQUAL, NOTEQUAL, LESSTHAN, LESSEQUAL, MORETHAN, MOREEQUAL;
@@ -75,7 +75,7 @@ top_level ::= functions main functions;
 
 functions ::= func functions
               |
-              assignment SEMICOL functions
+              assignment SEMICOL functions //globals
               |
               typedef functions
               |
@@ -131,7 +131,9 @@ statement ::= expr_no SEMICOL
       |
       assignment SEMICOL
       |
-      IDENTIFIER EQUAL expr SEMICOL //reassignment
+      IDENTIFIER EQUAL expr SEMICOL //reassignment 1
+      |
+      nested EQUAL expr SEMICOL //reassignment 2
       |
       READ IDENTIFIER SEMICOL
       |
@@ -159,7 +161,7 @@ elif ::= ELIF LPAREN expr RPAREN THEN statements
          |
          ELIF LPAREN expr RPAREN THEN statements elif;
 
-assignment ::= type IDENTIFIER EQUAL expr
+assignment ::= type IDENTIFIER EQUAL exprs
               |
               type IDENTIFIER;
 
@@ -179,7 +181,7 @@ expr ::= IDENTIFIER
     |
     FALSE
     |
-    LEN LPAREN IDENTIFIER RPAREN
+    LEN LPAREN IDENTIFIER RPAREN //len()
     |
     expr operator expr
     |
@@ -195,7 +197,13 @@ expr ::= IDENTIFIER
     |
     IDENTIFIER IN IDENTIFIER
     |
-    LCURLY keyvals RCURLY;
+    LCURLY keyvals RCURLY //init dictionary
+    |
+    nested;
+
+nested ::= IDENTIFIER DOT IDENTIFIER
+           |
+           nested DOT IDENTIFIER;
 
 numeric ::= INTEGER
             |

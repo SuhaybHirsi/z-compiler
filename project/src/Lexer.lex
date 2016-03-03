@@ -61,7 +61,7 @@ IdChar = {Letter} | {Digit} | _
 Identifier = {Letter}{IdChar}*
 PosInteger = [1-9]{Digit}*
 Integer = 0 | {PosInteger}
-Float = {Integer}\.{Digit}* | \.{Digit}*
+Float = {Integer}\.{Digit}{Digit}* | \.{Digit}{Digit}*
 Rational = {Integer}\/{PosInteger} | {Integer}_{PosInteger}\/{PosInteger}
 Comment = #.*"\n" | \/#.*#\/
 
@@ -133,6 +133,7 @@ Comment = #.*"\n" | \/#.*#\/
 	"::"			{ return symbol(sym.DCOLON);		}
 	":"				{ return symbol(sym.COLON);		}
 	","				{ return symbol(sym.COMMA);	}
+	"."				{ return symbol(sym.DOT);	}
 }
 
 [^]  {
