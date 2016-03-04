@@ -3,3 +3,5 @@
 3. We assumed that a string is enclosed in double quotation marks.
 4. We assumed that > and >= can also be used as operators as only < and <= are defined in the pdf file.
 5. We assumed that a char is a single character enclosed in single quotation marks.
+6. For this command "tdef type_id { declaration_list } ;" we assumed declaration_list can be empty.
+7. For this command "fdef returnType name (formal_parameter_list) { body } ;" we assumed body and formal_parameter_list can be emtpy.
