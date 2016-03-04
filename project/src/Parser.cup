@@ -28,7 +28,7 @@ parser code {:
 terminal MAIN, KBOOL, KCHAR, DICT, KINT, RATIONAL, FLOAT, TOP, SEQ, IN, TRUE, FALSE, TDEF, FDEF, VOID, ALIAS, IF, ELIF, ELSE, FORALL, WHILE, READ, PRINT, RETURN, OD, DO, FI, LEN, LESSEQUAL, MOREEQUAL, ISEQUAL, NOTEQUAL, LCURLY, RCURLY, LSQUARE, RSQUARE, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV, LESSTHAN, NOT, AND, OR, POWER, MORETHAN, DCOLON, COLON, INTEGER, IDENTIFIER, CHARACTER, KFLOAT, KRAT, COMMA, THEN, STRING, LPAREN, RPAREN, DOT;
 terminal BADCHAR;
 
-nonterminal top_level, elif, functions, statement, expr, exprs, main, func, statements, function_call, type, operator, assignment, keyvals, typedef, typeids, index, expr_no, numeric, nested, alias, type_void;
+nonterminal top_level, elif, functions, statement, expr, exprs, main, func, statements, function_call, type, operator, assignment, keyvals, typedef, typeids, index, expr_no, numeric, nested_id, alias, type_void;
 
 precedence left OR, AND, NOT;
 precedence left ISEQUAL, NOTEQUAL, LESSTHAN, LESSEQUAL, MORETHAN, MOREEQUAL;
@@ -105,13 +105,9 @@ statement ::= expr_no SEMICOL
               |
               assignment
               |
-              IDENTIFIER EQUAL expr SEMICOL //reassignment 1
+              nested_id EQUAL expr SEMICOL
               |
-              nested EQUAL expr SEMICOL //reassignment 2
-              |
-              READ IDENTIFIER SEMICOL
-              |
-              READ nested SEMICOL
+              READ nested_id SEMICOL
               |
               PRINT expr SEMICOL
               |
@@ -125,7 +121,7 @@ statement ::= expr_no SEMICOL
               |
               WHILE LPAREN expr RPAREN DO statements OD
               |
-              FORALL LPAREN IDENTIFIER IN IDENTIFIER RPAREN DO statements OD
+              FORALL LPAREN IDENTIFIER IN nested_id RPAREN DO statements OD
               |
               RETURN expr_no SEMICOL
               |
@@ -145,7 +141,7 @@ expr_no ::= expr
             |
             ;
 
-expr ::= IDENTIFIER
+expr ::= nested_id
         |
         numeric
         |
@@ -157,7 +153,7 @@ expr ::= IDENTIFIER
         |
         FALSE
         |
-        LEN LPAREN IDENTIFIER RPAREN //len()
+        LEN LPAREN nested_id RPAREN //len()
         |
         expr operator expr
         |
@@ -171,19 +167,17 @@ expr ::= IDENTIFIER
         |
         LSQUARE RSQUARE
         |
-        IDENTIFIER index //access index or indices in sequence
+        nested_id index //access index or indices in sequence
         |
-        IDENTIFIER IN IDENTIFIER
+        IDENTIFIER IN nested_id
         |
         LCURLY keyvals RCURLY //init dictionary
         |
-        LCURLY RCURLY
-        |
-        nested;
+        LCURLY RCURLY;
 
-nested ::= IDENTIFIER DOT IDENTIFIER
+nested_id ::= IDENTIFIER
            |
-           nested DOT IDENTIFIER;
+           nested_id DOT IDENTIFIER;
 
 numeric ::= INTEGER
             |
