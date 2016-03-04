@@ -23,14 +23,14 @@ Whitespace = \r|\n|\r\n|" "|"\t"
 Letter = [a-zA-Z]
 Digit = [0-9]
 Char = .
-String = .*
+String = [^\"]*
 IdChar = {Letter} | {Digit} | _
 Identifier = {Letter}{IdChar}*
 PosInteger = [1-9]{Digit}*
 Integer = 0 | {PosInteger}
 Float = {Integer}\.{Digit}{Digit}* | \.{Digit}{Digit}*
 Rational = {Integer}\/{PosInteger} | {Integer}_{PosInteger}\/{PosInteger}
-Comment = #.*"\n" | \/#.*#\/
+Comment = #.*\n | \/#([^#]|#[^\/]|\n)*#\/
 
 %%
 <YYINITIAL> {

@@ -17,7 +17,7 @@ parser code {:
   public void syntax_error(Symbol current_token) {
     report_error(
     "Syntax error at line " + (current_token.left+1) + ", column "
-    + current_token.right, null
+    + current_token.right + " ", null
     );
   syntaxErrors = true;
   }
@@ -28,7 +28,7 @@ parser code {:
 terminal MAIN, KBOOL, KCHAR, DICT, KINT, RATIONAL, FLOAT, TOP, SEQ, IN, TRUE, FALSE, TDEF, FDEF, VOID, ALIAS, IF, ELIF, ELSE, FORALL, WHILE, READ, PRINT, RETURN, OD, DO, FI, LEN, LESSEQUAL, MOREEQUAL, ISEQUAL, NOTEQUAL, LCURLY, RCURLY, LSQUARE, RSQUARE, EQUAL, SEMICOL, PLUS, MINUS, MULT, DIV, LESSTHAN, NOT, AND, OR, POWER, MORETHAN, DCOLON, COLON, INTEGER, IDENTIFIER, CHARACTER, KFLOAT, KRAT, COMMA, THEN, STRING, LPAREN, RPAREN, DOT;
 terminal BADCHAR;
 
-nonterminal top_level, elif, functions, statement, expr, exprs, main, func, statements, function_call, type, operator, assignment, keyvals, typedef, typeids, index, expr_no, numeric, nested, alias;
+nonterminal top_level, elif, functions, statement, expr, exprs, main, func, statements, function_call, type, operator, assignment, keyvals, typedef, typeids, index, expr_no, numeric, nested, alias, type_void;
 
 precedence left OR, AND, NOT;
 precedence left ISEQUAL, NOTEQUAL, LESSTHAN, LESSEQUAL, MORETHAN, MOREEQUAL;
@@ -51,9 +51,11 @@ functions ::= functions func
               |
               ;
 
-alias ::= ALIAS type type SEMICOL;
+alias ::= ALIAS type_void IDENTIFIER SEMICOL;
 
-typedef ::= TDEF IDENTIFIER LCURLY typeids RCURLY SEMICOL;
+typedef ::= TDEF IDENTIFIER LCURLY typeids RCURLY SEMICOL
+            |
+            TDEF IDENTIFIER LCURLY RCURLY SEMICOL;
 
 typeids ::= type IDENTIFIER
             |
@@ -61,13 +63,15 @@ typeids ::= type IDENTIFIER
 
 main ::= MAIN LCURLY statements RCURLY SEMICOL;
 
-func ::= FDEF type IDENTIFIER LPAREN typeids RPAREN LCURLY statements RCURLY SEMICOL
+func ::= FDEF type_void IDENTIFIER LPAREN typeids RPAREN LCURLY statements RCURLY SEMICOL
         |
-        FDEF VOID IDENTIFIER LPAREN typeids RPAREN LCURLY statements RCURLY SEMICOL
+        FDEF type_void IDENTIFIER LPAREN RPAREN LCURLY statements RCURLY SEMICOL
         |
-        FDEF type IDENTIFIER LPAREN RPAREN LCURLY statements RCURLY SEMICOL
-        |
-        FDEF VOID IDENTIFIER LPAREN RPAREN LCURLY statements RCURLY SEMICOL;
+        FDEF type_void IDENTIFIER LPAREN RPAREN LCURLY RCURLY SEMICOL;
+
+type_void ::= type
+              |
+              VOID;
 
 type ::= KFLOAT 
         | 
@@ -106,6 +110,8 @@ statement ::= expr_no SEMICOL
               nested EQUAL expr SEMICOL //reassignment 2
               |
               READ IDENTIFIER SEMICOL
+              |
+              READ nested SEMICOL
               |
               PRINT expr SEMICOL
               |
@@ -154,6 +160,8 @@ expr ::= IDENTIFIER
         LEN LPAREN IDENTIFIER RPAREN //len()
         |
         expr operator expr
+        |
+        NOT expr
         |
         LPAREN expr RPAREN
         |
@@ -226,8 +234,6 @@ operator ::= PLUS
             MORETHAN
             |
             POWER
-            |
-            NOT
             |
             AND
             |
